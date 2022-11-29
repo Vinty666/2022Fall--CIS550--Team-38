@@ -1,9 +1,15 @@
-# 2022Fall--CIS550--Team-38 (Music Website)
+
+Music Website
+==================================
+
+**University of Pennsylvania, CIS 550: 2022Fall--CIS550--Team-38**
 
 ## Team Member
-* Rui Zhang[LinkedIn]
-* Yuxin Hu[LinkedIn]
-* Hanlin Sun[LinkedIn]
-* Liwen Guo[LinkedIn]
+* Rui Zhang[LinkedIn]()
+* Yuxin Hu[LinkedIn]()
+* Hanlin Sun[LinkedIn]()
+* Liwen Guo[LinkedIn]()
 
 ## Introduction
+
+### Features
