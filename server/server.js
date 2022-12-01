@@ -14,6 +14,16 @@ app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 // Route 1 - register as GET 
 app.get('/hello', routes.hello)
 
+
+// Query 6
+app.get('/search/artists/:followers', routes.searchArtistsWithFollowers)
+
+// Query 7
+app.get('/search/artists/:followers/:popularity/:numSongs', routes.searchArtistsWithPopularitySongs)
+
+// Query 8
+app.get('/search/artists/grammy/:yearDiff', routes.searchArtistsGrammyWithTimeDiff)
+
 // Route 2 - register as GET 
 app.get('/search/specificSongs/:year', routes.search_specific_songs)
 
