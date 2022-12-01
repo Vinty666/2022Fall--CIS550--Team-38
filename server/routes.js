@@ -22,24 +22,34 @@ async function hello(req, res) {
     }
 }
 
-async function search_artist(req,res)
-{
-
+// Query 9
+async function grammyAlbumsWithinTime (req, res) {
+    console.log("search grammy album")
+    const inputGenre = req.query.genre ? req.query.genre : "pop"
+    const startYear = req.query.startYear ? req.query.startYear : 1999
+    const endYear = req.query.endYear ? req.query.endYear : 2018
+    connection.query(`SELECT album, grammyYear 
+    FROM GrammyAlbum 
+    WHERE genre LIKE '${inputGenre}' and GrammyYear <= ${endYear} and GrammyYear >= ${startYear};`
+    , function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
 }
 
-// Route 9 (for CIS550 final course project)
-// Description: 
-// Select the names of the (genre) artist who won at least one Grammy award (both song and album) in (certain_year) and released > (some threshold) albums..
-async function search_grammy_artist(req, res) {
-    // IMPORTANT: in your SQL LIKE matching, use the %query% format to match the search query to substrings, not just the entire string
-
-    const AlbumThreshold = req.query.AlbumThreshold ? req.query.AlbumThreshold : "0"
-
-    connection.query( `
-    SELECT C.artistName 
-    FROM GrammyAlbum A, GrammySong B, Artist C 
-    WHERE C.Artist=A.Artist or C.Artist = B.Artist and C.NumAlbum >${AlbumThreshold} `, function (error, results, fields) {
-
+// Query 9
+async function searchTopArtists (req, res) {
+    const artistName = req.query.artist ? req.query.artist : "%%"
+    connection.query(`SELECT artistName, followers 
+    FROM Artist 
+    WHERE artistName LIKE '%${artistName}%'
+    ORDER BY followers DESC 
+    LIMIT 10;`    
+    , function (error, results, fields) {
         if (error) {
             console.log(error)
             res.json({ error: error })
@@ -51,5 +61,6 @@ async function search_grammy_artist(req, res) {
 
 module.exports = {
     hello,
-    search_grammy_artist
+    grammyAlbumsWithinTime,
+    searchTopArtists
 }
