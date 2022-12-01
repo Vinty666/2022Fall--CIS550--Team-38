@@ -33,10 +33,6 @@ app.get('/search/specificSongs/:year', routes.search_specific_songs)
 // Route 3 - register as GET 
 app.get('/search/bfsCoCooperator/', routes.search_co_cooperator)
 
-// Route Test
-app.get('/artist/',routes.search_artist)
-
-app.get('/search/collaborators',routes.search_collaborators)
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
 });
