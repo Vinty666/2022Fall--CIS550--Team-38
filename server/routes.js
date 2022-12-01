@@ -22,6 +22,11 @@ async function hello(req, res) {
     }
 }
 
+async function search_artist(req,res)
+{
+
+}
+
 // Route 9 (for CIS550 final course project)
 // Description: 
 // Select the names of the (genre) artist who won at least one Grammy award (both song and album) in (certain_year) and released > (some threshold) albums..
