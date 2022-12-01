@@ -14,9 +14,9 @@ app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 // Route 1 - register as GET 
 app.get('/hello', routes.hello)
 
-app.get('/search/artists/specificArtist/:genre/:certainYear/:weeks/:albumThreshold',routes.search_artist)
+app.get('/search/artists/specificArtist/',routes.search_artist)
 
-app.get('/search/artist/:artist/:popThreshold/:folThreshold',routes.search_collaborators)
+app.get('/search/artist/collaborators/',routes.search_collaborators)
 
 // Query 6
 app.get('/search/artists/:followers', routes.searchArtistsWithFollowers)
@@ -32,6 +32,8 @@ app.get('/search/specificSongs/:year', routes.search_specific_songs)
 
 // Route 3 - register as GET 
 app.get('/search/bfsCoCooperator/', routes.search_co_cooperator)
+
+//Route
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
