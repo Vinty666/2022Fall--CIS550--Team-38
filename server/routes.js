@@ -132,6 +132,7 @@ async function search_collaborators(req,res)
 // To show details of specific songs which are on billboard and
 // win grammy at least once at certain year, details including song attributes, artist name,
 // lyrics, grammyAward, etc..
+//Query 5
 async function search_specific_songs(req, res) {
 
     const year = req.params.year ? req.params.year : '2004'
@@ -177,7 +178,7 @@ async function searchArtistsGrammyWithTimeDiff(req, res) {
 }
 
 
-// Route 3 (for CIS550 final course project)
+// Query 3 (for CIS550 final course project)
 // Description: 
 // Find top 5 hit songs has given genre (inputGenre)
 async function search_top_songs(req, res) {
@@ -201,7 +202,7 @@ async function search_top_songs(req, res) {
     });
 }
 
-// Route 4 (for CIS550 final course project)
+//Query 4 (for CIS550 final course project)
 // Description: 
 // To get potential collaborators: Select the co-artist of the
 // co-artist of an ${artist} where co-artists of co-artists have published at

@@ -14,8 +14,9 @@ app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 // Route 1 - register as GET 
 app.get('/hello', routes.hello)
 
-app.get('/search/artists/specificArtist/',routes.search_artist)
-
+//Query 1
+app.get('/search/artists/searchArtist/',routes.search_artist)
+//Query 2
 app.get('/search/artist/collaborators/',routes.search_collaborators)
 
 // Query 6
@@ -27,12 +28,14 @@ app.get('/search/artists/:followers/:popularity/:numSongs', routes.searchArtists
 // Query 8
 app.get('/search/artists/grammy/:yearDiff', routes.searchArtistsGrammyWithTimeDiff)
 
-// Route 2 - register as GET 
+// Query 5 - register as GET
 app.get('/search/specificSongs/:year', routes.search_specific_songs)
 
-// Route 3 - register as GET 
+// Query 3 - register as GET
 app.get('/search/bfsCoCooperator/', routes.search_co_cooperator)
 
+// Query 4 - register as GET
+app.get('/search/topSong/:genre',routes.search_top_songs)
 //Route
 
 app.listen(config.server_port, () => {
