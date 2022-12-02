@@ -38,6 +38,16 @@ app.get('/search/bfsCoCooperator/', routes.search_co_cooperator)
 app.get('/search/topSong/:genre',routes.search_top_songs)
 //Route
 
+// Query 9
+app.get('/search/album/genre', routes.grammyAlbumsWithinTime)
+
+// Query 10
+app.get('/search/topArtists/:artist', routes.searchTopArtists)
+
+// Query 4 - register as GET
+app.get('/search/topSong/:genre',routes.search_top_songs)
+//Route
+
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);
 });

@@ -201,6 +201,49 @@ async function search_top_songs(req, res) {
         }
     });
 }
+    });
+}
+<<<<<<< HEAD
+
+
+// Query 8: Find all artists who won grammy awards with given time difference between their first billboard hit songs since 1999 and their first grammy-awarded song, sort by time difference
+async function searchArtistsGrammyWithTimeDiff(req, res) {
+    // TODO: TASK 6: implement and test, potentially writing your own (ungraded) tests
+    const yearDiff = req.params.yearDiff ? req.params.yearDiff : 0;
+    connection.query(`SELECT b.artist, g.grammyYear, g.songName, (MIN(g.grammyYear) - MIN(substring(date, -4, 4))) AS yearDiff
+    FROM Billboard b
+    INNER JOIN GrammySong g
+    on g.artist = b.artist
+    Group By b.artist
+    HAVING yearDiff >= '${yearDiff}'
+    Order by yearDiff DESC`, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
+
+
+// Query 3 (for CIS550 final course project)
+// Description: 
+// Find top 5 hit songs has given genre (inputGenre)
+async function search_top_songs(req, res) {
+
+    const inputGenre = req.params.genre ? req.params.genre : 'Pop'
+
+    const t = '%'
+
+    connection.query( `
+    SELECT DISTINCT name
+    FROM Billboard
+    WHERE genre LIKE '${t+inputGenre+t}'
+    LIMIT 5;`, function (error, results, fields) {
+=======
+>>>>>>> vinty
+
 
 //Query 4 (for CIS550 final course project)
 // Description: 
@@ -250,9 +293,48 @@ async function search_co_cooperator(req, res) {
     });
 }
 
+// Query 9
+async function grammyAlbumsWithinTime (req, res) {
+    console.log("search grammy album")
+    const inputGenre = req.query.genre ? req.query.genre : "pop"
+    const startYear = req.query.startYear ? req.query.startYear : 1999
+    const endYear = req.query.endYear ? req.query.endYear : 2018
+    connection.query(`SELECT album, grammyYear 
+    FROM GrammyAlbum 
+    WHERE genre LIKE '${inputGenre}' and GrammyYear <= ${endYear} and GrammyYear >= ${startYear};`
+    , function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
+
+// Query 10
+async function searchTopArtists (req, res) {
+    const artistName = req.query.artist ? req.query.artist : "%%"
+    connection.query(`SELECT artistName, followers 
+    FROM Artist 
+    WHERE artistName LIKE '%${artistName}%'
+    ORDER BY followers DESC 
+    LIMIT 10;`    
+    , function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
+
 
 module.exports = {
     hello,
+    grammyAlbumsWithinTime,
+    searchTopArtists,
     searchArtistsWithFollowers,
     searchArtistsWithPopularitySongs,
     searchArtistsGrammyWithTimeDiff,
