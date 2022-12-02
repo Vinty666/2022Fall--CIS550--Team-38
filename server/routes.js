@@ -203,8 +203,6 @@ async function search_top_songs(req, res) {
 }
     });
 }
-<<<<<<< HEAD
-
 
 // Query 8: Find all artists who won grammy awards with given time difference between their first billboard hit songs since 1999 and their first grammy-awarded song, sort by time difference
 async function searchArtistsGrammyWithTimeDiff(req, res) {
@@ -241,8 +239,14 @@ async function search_top_songs(req, res) {
     FROM Billboard
     WHERE genre LIKE '${t+inputGenre+t}'
     LIMIT 5;`, function (error, results, fields) {
-=======
->>>>>>> vinty
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    });
+}
 
 
 //Query 4 (for CIS550 final course project)
