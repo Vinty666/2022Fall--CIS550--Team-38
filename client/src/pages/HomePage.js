@@ -6,7 +6,7 @@ import {
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getAllMatches, getAllPlayers } from '../fetcher'
+import {searchCollaborators, searchCoCooperator} from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
 
@@ -66,16 +66,13 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    getAllMatches(null, null, 'D1').then(res => {
-      this.setState({ matchesResults: res.results })
-    })
-
-    getAllPlayers().then(res => {
+    // searchArtist(null, null, '2013').then(res => {
+    //   this.setState({ matchesResults: res.results })
+    // })
+    searchCoCooperator('Justin Bieber',50000,20).then(res => {
       console.log(res.results)
       // TASK 1: set the correct state attribute to res.results
     })
-
- 
   }
 
 

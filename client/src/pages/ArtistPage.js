@@ -9,19 +9,16 @@ import {
     Col,
     Divider,
     Slider,
-    Rate 
+    Rate
 } from 'antd'
+
 import { RadarChart } from 'react-vis';
 import { format } from 'd3-format';
-
-
-
-
 import MenuBar from '../components/MenuBar';
-import { getPlayerSearch, getPlayer } from '../fetcher'
+import { searchArtist, searchCollaborators,searchTopArtist,searchArtistWithFollowers,searchArtistsWithPopularitySongs } from '../fetcher'
 const wideFormat = format('.3r');
 
-const playerColumns = [
+const ArtistColumns = [
     {
         title: 'Name',
         dataIndex: 'Name',
@@ -42,15 +39,20 @@ const playerColumns = [
         sorter: (a, b) => a.Rating - b.Rating
 
     }
-    // TASK 19: copy over your answers for tasks 7 - 9 to add columns for potential, club, and value
 ];
 
 
-class PlayersPage extends React.Component {
+class ArtistPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            nameQuery: '',
+            artistNameQuery: '',
+            certainYearQuery:'',
+            weekQuery:0,
+            albumThresholdQuery:'',
+            popThreshold:0,
+            folThreshold:0,
+
             nationalityQuery: '',
             clubQuery: '',
             ratingHighQuery: 100,
@@ -59,24 +61,46 @@ class PlayersPage extends React.Component {
             potLowQuery: 0,
             selectedPlayerId: window.location.search ? window.location.search.substring(1).split('=')[1] : 229594,
             selectedPlayerDetails: null,
-            playersResults: []
+            ArtistResults: []
 
         }
-
+        //Add here
         this.updateSearchResults = this.updateSearchResults.bind(this)
-        this.handleNameQueryChange = this.handleNameQueryChange.bind(this)
+        this.handleArtistNameQueryChange = this.handleArtistNameQueryChange.bind(this)
+        this.handleYearQueryChange=this.handleYearQueryChange.bind(this)
+        this.handleWeekChange=this.handleWeekChange.bind(this)
+        this.handlePopThresholdChange=this.handlePopThresholdChange.bind(this)
+        this.handleFollowerThresholdChange=this.handleFollowerThresholdChange.bind(this)
+
+
         this.handleNationalityQueryChange = this.handleNationalityQueryChange.bind(this)
         this.handleClubQueryChange = this.handleClubQueryChange.bind(this)
         this.handleRatingChange = this.handleRatingChange.bind(this)
         this.handlePotentialChange = this.handlePotentialChange.bind(this)
     }
-
-    
-
-    handleNameQueryChange(event) {
-        this.setState({ nameQuery: event.target.value })
+    handleWeekQueryChange
+    handleYearQueryChange(event)
+    {
+        this.setState({certainYearQuery:event.target.value})
     }
 
+    handleWeekChange(value)
+    {
+        this.setState({weekQuery:value[0]})
+    }
+
+    handleArtistNameQueryChange(event) {
+        this.setState({ artistNameQuery: event.target.value })
+    }
+
+    handlePopThresholdChange(value)
+    {
+        this.setState({popThreshold:value[0]})
+    }
+    handleFollowerThresholdChange(value)
+    {
+        this.setState({folThreshold:value[0]})
+    }
     handleClubQueryChange(event) {
         // TASK 20: update state variables appropriately. See handleNameQueryChange(event) for reference
     }
@@ -94,29 +118,25 @@ class PlayersPage extends React.Component {
         // TASK 22: parse value and update state variables appropriately. See handleRatingChange(value) for reference
     }
 
-
-
     updateSearchResults() {
-
         //TASK 23: call getPlayerSearch and update playerResults in state. See componentDidMount() for a hint
 
     }
-
     componentDidMount() {
-        getPlayerSearch(this.state.nameQuery, this.state.nationalityQuery, this.state.clubQuery, this.state.ratingHighQuery, this.state.ratingLowQuery, this.state.potHighQuery, this.state.potLowQuery, null, null).then(res => {
-            this.setState({ playersResults: res.results })
+
+        //Query 1
+        searchArtist(this.artistNameQuery,this.certainYearQuery,this.weekQuery,this.albumThresholdQuery).then(res=>{
+            this.setState({ArtistResults:res})
         })
+        
 
-        // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable. 
-        // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint! 
-
+        // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable.
+        // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint!
     }
 
     render() {
         return (
-
             <div>
-
                 <MenuBar />
                 <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
@@ -154,7 +174,7 @@ class PlayersPage extends React.Component {
 
                 {this.state.selectedPlayerDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                     <Card>
-                    
+
                         <CardBody>
                         <Row gutter='30' align='middle' justify='center'>
                             <Col flex={2} style={{ textAlign: 'left' }}>
@@ -234,9 +254,9 @@ class PlayersPage extends React.Component {
                                 ]}
                                 width={450}
                                 height={400}
-                                
+
                             />}
-                                
+
                                 </Col>
                             </Row>
                         </CardBody>
@@ -249,5 +269,5 @@ class PlayersPage extends React.Component {
     }
 }
 
-export default PlayersPage
+export default ArtistPage
 

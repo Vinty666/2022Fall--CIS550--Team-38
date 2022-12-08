@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
-import PlayersPage from './pages/PlayersPage';
+import ArtistPage from './pages/ArtistPage';
 import 'antd/dist/antd.css';
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -26,13 +26,13 @@ ReactDOM.render(
         <Route exact
 							path="/players"
 							render={() => (
-								<PlayersPage />
+								<ArtistPage />
 							)}/>
-        <Route exact
-							path="/matches"
-							render={() => (
-								<MatchesPage />
-							)}/>
+        {/*<Route exact*/}
+		{/*					path="/matches"*/}
+		{/*					render={() => (*/}
+		{/*						<MatchesPage />*/}
+		{/*					)}/>*/}
       </Switch>
     </Router>
   </div>,
