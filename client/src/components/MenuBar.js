@@ -11,7 +11,7 @@ class MenuBar extends React.Component {
     render() {
         return(
             <Navbar type="dark" theme="primary" expand="md">
-        <NavbarBrand href="/">CIS 550 FIFA</NavbarBrand>
+        <NavbarBrand href="/">CIS 550 Final Project</NavbarBrand>
           <Nav navbar>
           <NavItem>
               <NavLink active href="/">
@@ -20,12 +20,22 @@ class MenuBar extends React.Component {
             </NavItem>
             <NavItem>
               <NavLink active href="/players">
-                Players
+                P
               </NavLink>
             </NavItem>
             <NavItem>
               <NavLink active  href="/matches" >
-                Matches
+                M
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink active href="/search_song">
+                SearchSongs
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink active href="/top_song">
+                TopSongs
               </NavLink>
             </NavItem>
           </Nav>

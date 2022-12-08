@@ -1,7 +1,7 @@
 import config from './config.json'
 
 const searchArtist=async(genre,certainYear,weeks,albumThreshold)=>{
-    var res=await fetch(`http://${config.server.host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
         method:'GET'
     })
     return res.json();
@@ -22,14 +22,15 @@ const searchCoCooperator=async(artist,folThreshold,hitsThreshold)=>{
 }
 
 const searchTopSongs=async(genre)=>{
-    var res=await fetch(`http://${config.server.host}:${config.server_port}/getTopSong?inputGenre=${genre}`,{
+
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopSong/${genre}`,{
         method:'GET'
     })
     return res.json();
 }
 
 const searchSpecificSong = async(year)=>{
-    var res=await fetch(`http://${config.server.host}:${config.server_port}/getSongsByYear?year=${year}`,{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`,{
         method:'GET'
     })
     return res.json();
