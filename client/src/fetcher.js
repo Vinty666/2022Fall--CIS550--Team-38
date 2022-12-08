@@ -1,8 +1,6 @@
 import config from './config.json'
 
 const searchArtist=async(genre,certainYear,weeks,albumThreshold)=>{
-    const temp = `http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`
-    console.log(temp)
     var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
         method:'GET'
     })
@@ -10,32 +8,29 @@ const searchArtist=async(genre,certainYear,weeks,albumThreshold)=>{
 }
 
 const searchCollaborators=async(artist,popThreshold,folThreshold)=>{
-    const temp = `http://${config.server_host}:${config.server_port}/getArtist/cooperators/:artist=${artist}&popThreshold=${popThreshold}&folThreshold=${folThreshold}`
-    console.log(temp)
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist/cooperators/:artist=${artist}&popThreshold=${popThreshold}&folThreshold=${folThreshold}`,{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist/cooperators?artist=${artist}&popThreshold=${popThreshold}&folThreshold=${folThreshold}`,{
         method:'GET'
     })
     return res.json();
 }
 
 const searchCoCooperator=async(artist,folThreshold,hitsThreshold)=>{
-    const temp = `http://${config.server_host}:${config.server_port}/getArtist/coCooperators/:artist=${artist}&fol_threshold=${folThreshold}&hits_threshold=${hitsThreshold}`
-    console.log(temp)
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist/coCooperators/:artist=${artist}&fol_threshold=${folThreshold}&hits_threshold=${hitsThreshold}`,{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist/coCooperators?artist=${artist}&fol_threshold=${folThreshold}&hits_threshold=${hitsThreshold}`,{
         method:'GET'
     })
     return res.json();
 }
 
 const searchTopSongs=async(genre)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopSong?inputGenre=${genre}`,{
+
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopSong/${genre}`,{
         method:'GET'
     })
     return res.json();
 }
 
 const searchSpecificSong = async(year)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongsByYear/:year=${year}`,{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`,{
         method:'GET'
     })
     return res.json();

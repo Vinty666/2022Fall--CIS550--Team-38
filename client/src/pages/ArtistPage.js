@@ -15,7 +15,14 @@ import {
 import { RadarChart } from 'react-vis';
 import { format } from 'd3-format';
 import MenuBar from '../components/MenuBar';
-import { searchArtist, searchCollaborators,searchTopArtist,searchArtistWithFollowers,searchArtistsWithPopularitySongs } from '../fetcher'
+import {
+    searchArtist,
+    searchCollaborators,
+    searchTopArtist,
+    searchArtistWithFollowers,
+    searchArtistsWithPopularitySongs,
+    searchCoCooperator
+} from '../fetcher'
 const wideFormat = format('.3r');
 
 const ArtistColumns = [
@@ -48,35 +55,25 @@ class ArtistPage extends React.Component {
         this.state = {
             artistNameQuery: '',
             certainYearQuery:'',
-            weekQuery:0,
+            weekQuery:'',
             albumThresholdQuery:'',
-            popThreshold:0,
-            folThreshold:0,
+            popThreshold:'',
+            folThreshold:'',
+            hitsThreshold:'',
 
-            nationalityQuery: '',
-            clubQuery: '',
-            ratingHighQuery: 100,
-            ratingLowQuery: 0,
-            potHighQuery: 100,
-            potLowQuery: 0,
-            selectedPlayerId: window.location.search ? window.location.search.substring(1).split('=')[1] : 229594,
-            selectedPlayerDetails: null,
-            ArtistResults: []
-
+            ArtistResults: [],
+            CollaboratorResults:[],
+            co_CollaboratorResults:[]
         }
         //Add here
-        this.updateSearchResults = this.updateSearchResults.bind(this)
+        this.updateSearchArtistResults = this.updateSearchArtistResults.bind(this)
+        this.updateCollaboratorResults=this.updateCollaboratorResults.bind(this)
         this.handleArtistNameQueryChange = this.handleArtistNameQueryChange.bind(this)
         this.handleYearQueryChange=this.handleYearQueryChange.bind(this)
         this.handleWeekChange=this.handleWeekChange.bind(this)
         this.handlePopThresholdChange=this.handlePopThresholdChange.bind(this)
         this.handleFollowerThresholdChange=this.handleFollowerThresholdChange.bind(this)
-
-
-        this.handleNationalityQueryChange = this.handleNationalityQueryChange.bind(this)
-        this.handleClubQueryChange = this.handleClubQueryChange.bind(this)
-        this.handleRatingChange = this.handleRatingChange.bind(this)
-        this.handlePotentialChange = this.handlePotentialChange.bind(this)
+        this.handleHitsThresholdChange=this.handleHitsThresholdChange.bind(this)
     }
     handleWeekQueryChange
     handleYearQueryChange(event)
@@ -84,51 +81,59 @@ class ArtistPage extends React.Component {
         this.setState({certainYearQuery:event.target.value})
     }
 
-    handleWeekChange(value)
+    handleWeekChange(event)
     {
-        this.setState({weekQuery:value[0]})
+        this.setState({weekQuery:event.target.value})
     }
 
     handleArtistNameQueryChange(event) {
         this.setState({ artistNameQuery: event.target.value })
     }
 
-    handlePopThresholdChange(value)
+    handleAlbumQueryChange(event)
     {
-        this.setState({popThreshold:value[0]})
+        this.setState({albumThresholdQuery:event.target.value})
     }
-    handleFollowerThresholdChange(value)
+
+    handlePopThresholdChange(event)
     {
-        this.setState({folThreshold:value[0]})
+        this.setState({popThreshold:event.target.value})
     }
-    handleClubQueryChange(event) {
-        // TASK 20: update state variables appropriately. See handleNameQueryChange(event) for reference
+    handleFollowerThresholdChange(event)
+    {
+        this.setState({folThreshold:event.target.value})
     }
-
-    handleNationalityQueryChange(event) {
-        // TASK 21: update state variables appropriately. See handleNameQueryChange(event) for reference
-    }
-
-    handleRatingChange(value) {
-        this.setState({ ratingLowQuery: value[0] })
-        this.setState({ ratingHighQuery: value[1] })
+    handleHitsThresholdChange(event)
+    {
+        this.setState({hitThreshold:event.target.value})
     }
 
-    handlePotentialChange(value) {
-        // TASK 22: parse value and update state variables appropriately. See handleRatingChange(value) for reference
+    goToMatch(matchId) {
+        window.location = `/matches?id=${matchId}`
     }
 
-    updateSearchResults() {
+    updateSearchArtistResults() {
         //TASK 23: call getPlayerSearch and update playerResults in state. See componentDidMount() for a hint
-
-    }
-    componentDidMount() {
-
         //Query 1
         searchArtist(this.artistNameQuery,this.certainYearQuery,this.weekQuery,this.albumThresholdQuery).then(res=>{
             this.setState({ArtistResults:res})
         })
-        
+
+        // searchArtistWithFollowers(this.folThreshold).then(res=> {
+        //     this.setState({ArtistResults:res})
+        // })
+    }
+    updateCollaboratorResults()
+    {
+        searchCollaborators(this.artistNameQuery,this.popThreshold,this.folThreshold).then(res=>{
+            this.setState({CollaboratorResults:res})
+        })
+
+        searchCoCooperator(this.artistNameQuery,this.folThreshold,this.hitsThreshold).then(res=>{
+            this.setState({co_CollaboratorResults:res})
+        })
+    }
+    componentDidMount() {
 
         // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable.
         // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint!
@@ -140,17 +145,83 @@ class ArtistPage extends React.Component {
                 <MenuBar />
                 <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
-                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Name</label>
-                            <FormInput placeholder="Name" value={this.state.nameQuery} onChange={this.handleNameQueryChange} />
+                        <Col flex={2}><FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                            <label>Artist Name</label>
+                            <FormInput placeholder="Artist Name" value={this.state.artistNameQuery} onChange={this.handleArtistNameQueryChange} />
                         </FormGroup></Col>
-                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Nationality</label>
-                            <FormInput placeholder="Nationality" value={this.state.nationalityQuery} onChange={this.handleNationalityQueryChange} />
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                            <label>Year</label>
+                            <FormInput placeholder="Certain Year" value={this.state.certainYearQuery} onChange={this.handleYearQueryChange} />
+                        </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                                <label>Week</label>
+                                <FormInput placeholder="Week" value={this.state.weekQuery} onChange={this.handleWeekChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                                <label>Album Num</label>
+                                <FormInput placeholder="Album" value={this.state.albumThresholdQuery} onChange={this.handleAlbumQueryChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                                <label>Popularity</label>
+                                <FormInput placeholder="Popularity" value={this.state.popThreshold} onChange={this.handlePopThresholdChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                                <label>Followers</label>
+                                <FormInput placeholder="Followers" value={this.state.folThreshold} onChange={this.handleFollowerThresholdChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '4vh', font:'5pt' }} onClick={this.updateSearchArtistResults}>Search Artist</Button>
+                        </FormGroup>
+                        </Col>
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '4vh' , font:'5pt'}} onClick={this.updateCollaboratorResults}>Search Collaborator</Button>
+                        </FormGroup>
+                        </Col>
+                    </Row>
+                </Form>
+                <br></br>
+
+
+                <Form style={{ width: '60vw', margin: '0 auto', marginTop: '5vh' }}>
+                    <Row>
+                        <Col flex={2}><FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                            <label>Artist Name</label>
+                            <FormInput placeholder="Artist Name" value={this.state.artistNameQuery} onChange={this.handleArtistNameQueryChange} />
                         </FormGroup></Col>
-                        {/* TASK 26: Create a column for Club, using the elements and style we followed in the above two columns. Use the onChange method (handleClubQueryChange)  */}
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                                <label>Popularity</label>
+                                <FormInput placeholder="Popularity" value={this.state.popThreshold} onChange={this.handlePopThresholdChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                                <label>Week</label>
+                                <FormInput placeholder="WeekNumber" value={this.state.weekQuery} onChange={this.handleWeekChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                                <label>AlbumNumber</label>
+                                <FormInput placeholder="AlbumNumber" value={this.state.albumThresholdQuery} onChange={this.handleAlbumQueryChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '4vh' }} onClick={this.updateCollaboratorResults}>Search</Button>
+                        </FormGroup></Col>
 
                     </Row>
+
                     <br></br>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
@@ -160,13 +231,12 @@ class ArtistPage extends React.Component {
                         </FormGroup></Col>
                         {/* TASK 27: Create a column with a label and slider in a FormGroup item for filtering by Potential. See the column above for reference and use the onChange method (handlePotentialChange)  */}
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchResults}>Search</Button>
+                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchArtistResults}>Search Artist</Button>
                         </FormGroup></Col>
-
                     </Row>
-
-
                 </Form>
+
+
                 <Divider />
                 {/* TASK 24: Copy in the players table from the Home page, but use the following style tag: style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }} - this should be one line of code! */}
 
