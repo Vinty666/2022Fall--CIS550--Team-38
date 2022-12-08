@@ -11,7 +11,7 @@ import {
 
 } from 'antd'
 
-import { getMatchSearch, getMatch } from '../fetcher'
+import { searchArtist, searchCollaborators } from '../fetcher'
 
 
 import MenuBar from '../components/MenuBar';
@@ -58,16 +58,15 @@ class MatchesPage extends React.Component {
     }
 
     componentDidMount() {
-        getMatchSearch(this.state.homeQuery, this.state.awayQuery, null, null).then(res => {
-            this.setState({ matchesResults: res.results })
-        })
 
-        getMatch(this.state.selectedMatchId).then(res => {
-            this.setState({ selectedMatchDetails: res.results[0] })
-        })
-
-
-
+        // getMatchSearch(this.state.homeQuery, this.state.awayQuery, null, null).then(res => {
+        //     this.setState({ matchesResults: res.results })
+        // })
+        //
+        // getMatch(this.state.selectedMatchId).then(res => {
+        //     this.setState({ selectedMatchDetails: res.results[0] })
+        // })
+        //
 
     }
 
@@ -95,7 +94,7 @@ class MatchesPage extends React.Component {
                 </Form>
                 <Divider />
                 {/* TASK 12: Copy over your implementation of the matches table from the home page */}
-                
+
                 <Divider />
                 {this.state.selectedMatchDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                     <Card>
@@ -165,11 +164,11 @@ class MatchesPage extends React.Component {
                                 </Col>
                             </Row>
                             {/* TASK 17: add a row for yellow cards - check out the above lines for how we did it for red cards */}
-                            
+
 
                         </CardBody>
                     </Card>
-                    
+
                 </div> : null}
                 <Divider />
 

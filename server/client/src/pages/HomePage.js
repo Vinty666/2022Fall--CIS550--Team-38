@@ -6,7 +6,7 @@ import {
 } from 'antd'
 
 import MenuBar from '../components/MenuBar';
-import { getAllMatches, getAllPlayers } from '../fetcher'
+import { searchArtist, searchArtist } from '../fetcher'
 const { Column, ColumnGroup } = Table;
 const { Option } = Select;
 
@@ -51,13 +51,12 @@ class HomePage extends React.Component {
     }
 
     this.leagueOnChange = this.leagueOnChange.bind(this)
-    this.goToMatch = this.goToMatch.bind(this)
+    //this.goToMatch = this.goToMatch.bind(this)
   }
 
-
-  goToMatch(matchId) {
-    window.location = `/matches?id=${matchId}`
-  }
+  // goToMatch(matchId) {
+  //   window.location = `/matches?id=${matchId}`
+  // }
 
   leagueOnChange(value) {
     // TASK 2: this value should be used as a parameter to call getAllMatches in fetcher.js with the parameters page and pageSize set to null
@@ -66,21 +65,12 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    getAllMatches(null, null, 'D1').then(res => {
-      this.setState({ matchesResults: res.results })
+    searchArtist(null,null,null,null).then(res=>{
+      console.log("fuck you son of beach "+ res)
     })
-
-    getAllPlayers().then(res => {
-      console.log(res.results)
-      // TASK 1: set the correct state attribute to res.results
-    })
-
- 
   }
 
-
   render() {
-
     return (
       <div>
         <MenuBar />
@@ -93,9 +83,7 @@ class HomePage extends React.Component {
           <Select defaultValue="D1" style={{ width: 120 }} onChange={this.leagueOnChange}>
             <Option value="D1">Bundesliga</Option>
              {/* TASK 3: Take a look at Dataset Information.md from MS1 and add other options to the selector here  */}
-
           </Select>
-          
           <Table onRow={(record, rowIndex) => {
     return {
       onClick: event => {this.goToMatch(record.MatchId)}, // clicking a row takes the user to a detailed view of the match in the /matches page using the MatchId parameter  
@@ -107,14 +95,10 @@ class HomePage extends React.Component {
             </ColumnGroup>
             <ColumnGroup title="Goals">
               {/* TASK 5: add columns for home and away goals in this ColumnGroup, with the ability to sort values in these columns numerically */}
-             
             </ColumnGroup>
              {/* TASK 6: create two columns (independent - not in a column group) for the date and time. Do not add a sorting functionality */}
           </Table>
-
         </div>
-
-
       </div>
     )
   }

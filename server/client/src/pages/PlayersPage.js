@@ -9,7 +9,7 @@ import {
     Col,
     Divider,
     Slider,
-    Rate 
+    Rate
 } from 'antd'
 import { RadarChart } from 'react-vis';
 import { format } from 'd3-format';
@@ -71,7 +71,7 @@ class PlayersPage extends React.Component {
         this.handlePotentialChange = this.handlePotentialChange.bind(this)
     }
 
-    
+
 
     handleNameQueryChange(event) {
         this.setState({ nameQuery: event.target.value })
@@ -103,12 +103,12 @@ class PlayersPage extends React.Component {
     }
 
     componentDidMount() {
-        getPlayerSearch(this.state.nameQuery, this.state.nationalityQuery, this.state.clubQuery, this.state.ratingHighQuery, this.state.ratingLowQuery, this.state.potHighQuery, this.state.potLowQuery, null, null).then(res => {
-            this.setState({ playersResults: res.results })
-        })
+        // getPlayerSearch(this.state.nameQuery, this.state.nationalityQuery, this.state.clubQuery, this.state.ratingHighQuery, this.state.ratingLowQuery, this.state.potHighQuery, this.state.potLowQuery, null, null).then(res => {
+        //     this.setState({ playersResults: res.results })
+        // })
 
-        // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable. 
-        // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint! 
+        // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable.
+        // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint!
 
     }
 
@@ -154,7 +154,7 @@ class PlayersPage extends React.Component {
 
                 {this.state.selectedPlayerDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                     <Card>
-                    
+
                         <CardBody>
                         <Row gutter='30' align='middle' justify='center'>
                             <Col flex={2} style={{ textAlign: 'left' }}>
@@ -234,9 +234,9 @@ class PlayersPage extends React.Component {
                                 ]}
                                 width={450}
                                 height={400}
-                                
+
                             />}
-                                
+
                                 </Col>
                             </Row>
                         </CardBody>

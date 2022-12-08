@@ -11,7 +11,6 @@ const app = express();
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
-
 //Query 1
 app.get('/getArtist',routes.search_artist)
 
