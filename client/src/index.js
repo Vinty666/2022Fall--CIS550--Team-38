@@ -8,6 +8,10 @@ import {
 
 import HomePage from './pages/HomePage';
 import PlayersPage from './pages/PlayersPage';
+
+import SearchSongPage from './pages/SearchSongPage';
+
+import TopSongPage from './pages/TopSongPage';
 import 'antd/dist/antd.css';
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -32,6 +36,16 @@ ReactDOM.render(
 							path="/matches"
 							render={() => (
 								<MatchesPage />
+							)}/>
+        <Route exact
+							path="/search_song"
+							render={() => (
+								<SearchSongPage />
+							)}/>
+        <Route exact
+							path="/top_song"
+							render={() => (
+								<TopSongPage />
 							)}/>
       </Switch>
     </Router>

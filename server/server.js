@@ -21,7 +21,7 @@ app.get('/getArtist/cooperators/:artist',routes.search_collaborators)
 app.get('/getArtist/coCooperators/:artist', routes.search_co_cooperator)
 
 // Query 4 - register as GET
-app.get('/getTopSong',routes.search_top_songs)
+app.get('/getTopSong/:genre',routes.search_top_songs)
 
 // Query 5 - register as GET
 app.get('/getSongsByYear/:year', routes.search_specific_songs)
