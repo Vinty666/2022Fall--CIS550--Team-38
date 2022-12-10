@@ -66,18 +66,11 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    // searchArtist(null, null, '2013').then(res => {
-    //   this.setState({ matchesResults: res.results })
-    // })
-    searchCoCooperator('Justin Bieber',50000,20).then(res => {
-      console.log(res.results)
-      // TASK 1: set the correct state attribute to res.results
-    })
+
   }
 
 
   render() {
-
     return (
       <div>
         <MenuBar />
@@ -90,9 +83,7 @@ class HomePage extends React.Component {
           <Select defaultValue="D1" style={{ width: 120 }} onChange={this.leagueOnChange}>
             <Option value="D1">Bundesliga</Option>
              {/* TASK 3: Take a look at Dataset Information.md from MS1 and add other options to the selector here  */}
-
           </Select>
-          
           <Table onRow={(record, rowIndex) => {
     return {
       onClick: event => {this.goToMatch(record.MatchId)}, // clicking a row takes the user to a detailed view of the match in the /matches page using the MatchId parameter  
@@ -104,7 +95,6 @@ class HomePage extends React.Component {
             </ColumnGroup>
             <ColumnGroup title="Goals">
               {/* TASK 5: add columns for home and away goals in this ColumnGroup, with the ability to sort values in these columns numerically */}
-             
             </ColumnGroup>
              {/* TASK 6: create two columns (independent - not in a column group) for the date and time. Do not add a sorting functionality */}
           </Table>
