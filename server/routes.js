@@ -132,7 +132,7 @@ async function search_co_cooperator(req, res) {
 // Find top 5 hit songs has given genre (inputGenre)
 async function search_top_songs(req, res) {
 
-    const inputGenre = req.query.genre ? req.query.genre : 'Pop'
+    const inputGenre = req.params.genre ? req.params.genre : 'Pop'
 
     const t = '%'
 

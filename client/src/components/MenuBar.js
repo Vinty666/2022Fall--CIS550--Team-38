@@ -30,7 +30,7 @@ class MenuBar extends React.Component {
             </NavItem>
             <NavItem>
               <NavLink active href="/search_song">
-                SearchSongs
+                WinningSongs
               </NavLink>
             </NavItem>
             <NavItem>
