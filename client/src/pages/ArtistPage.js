@@ -70,6 +70,7 @@ class ArtistPage extends React.Component {
         this.updateSearchArtistResults = this.updateSearchArtistResults.bind(this)
         this.updateCollaboratorResults=this.updateCollaboratorResults.bind(this)
         this.handleArtistNameQueryChange = this.handleArtistNameQueryChange.bind(this)
+        this.handleAlbumQueryChange=this.handleAlbumQueryChange.bind(this)
         this.handleYearQueryChange=this.handleYearQueryChange.bind(this)
         this.handleWeekChange=this.handleWeekChange.bind(this)
         this.handlePopThresholdChange=this.handlePopThresholdChange.bind(this)
@@ -94,7 +95,7 @@ class ArtistPage extends React.Component {
 
     handleAlbumQueryChange(event)
     {
-        this.setState({albumThresholdQuery:event.target.value})
+        this.setState({albumThresholdQuery: event.target.value})
     }
 
     handlePopThresholdChange(event)
@@ -190,14 +191,14 @@ class ArtistPage extends React.Component {
                         </Col>
                     </Row>
                 </Form>
-                <br></br>
 
+                <br></br>
                 <Divider />
                 <Table onRow={(record, rowIndex) => {
                     return {
                         onClick: event => { this.goToMatch(record.MatchId) },
                     };
-                }} dataSource={this.state.matchesResults} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }}>
+                }} dataSource={this.state.ArtistResults} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }}>
                     <Column title="" dataIndex="" key="" />
                     <Column title="Artist Name" dataIndex="Artist Name" key="Artist Name" />
                     <Column title="" dataIndex="" key="" />
@@ -205,12 +206,12 @@ class ArtistPage extends React.Component {
                     <Column title="" dataIndex="" key="" />
                     <Column title="" dataIndex="" key="" />
                 </Table>
-
+                <Divider />
                 <Table onRow={(record, rowIndex) => {
                     return {
                         onClick: event => { this.goToMatch(record.MatchId) },
                     };
-                }} dataSource={this.state.matchesResults} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }}>
+                }} dataSource={this.state.CollaboratorResults} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }}>
                     <Column title="" dataIndex="" key="" />
                     <Column title="Cooperator Name" dataIndex="Cooperator Name" key="Cooperator Name" />
                     <Column title="" dataIndex="" key="" />
@@ -218,8 +219,8 @@ class ArtistPage extends React.Component {
                     <Column title="" dataIndex="" key="" />
                     <Column title="" dataIndex="" key="" />
                 </Table>
-
             </div>
+
         )
     }
 }
