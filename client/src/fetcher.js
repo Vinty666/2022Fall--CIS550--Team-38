@@ -1,7 +1,7 @@
 import config from './config.json'
 
-const searchArtist=async(genre,certainYear,weeks,albumThreshold)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
+const searchArtist=async(genre,gender,certainYear,weeks,albumThreshold)=>{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&gender=${gender}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
         method:'GET'
     })
     return res.json();

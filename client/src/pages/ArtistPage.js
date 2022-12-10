@@ -56,8 +56,10 @@ class ArtistPage extends React.Component {
         this.state = {
             artistNameQuery: '',
             certainYearQuery:'',
+            genreQuery:'',
             weekQuery:'',
             albumThresholdQuery:'',
+            genderQuery:'',
             popThreshold:'',
             folThreshold:'',
             hitsThreshold:'',
@@ -67,6 +69,8 @@ class ArtistPage extends React.Component {
             co_CollaboratorResults:[]
         }
         //Add here
+        this.handleGenderQueryChange=this.handleGenderQueryChange.bind(this)
+        this.handleGenreQueryChange=this.handleGenreQueryChange.bind(this)
         this.updateSearchArtistResults = this.updateSearchArtistResults.bind(this)
         this.updateCollaboratorResults=this.updateCollaboratorResults.bind(this)
         this.handleArtistNameQueryChange = this.handleArtistNameQueryChange.bind(this)
@@ -78,18 +82,27 @@ class ArtistPage extends React.Component {
         this.handleHitsThresholdChange=this.handleHitsThresholdChange.bind(this)
         this.goToMatch = this.goToMatch.bind(this)
     }
-    handleWeekQueryChange
+
     handleYearQueryChange(event)
     {
         this.setState({certainYearQuery:event.target.value})
     }
 
+    handleGenreQueryChange(event)
+    {
+        this.setState({genreQuery:event.target.value})
+    }
+    handleGenderQueryChange(event)
+    {
+        this.setState({genderQuery:event.target.value})
+    }
     handleWeekChange(event)
     {
         this.setState({weekQuery:event.target.value})
     }
 
-    handleArtistNameQueryChange(event) {
+    handleArtistNameQueryChange(event)
+    {
         this.setState({ artistNameQuery: event.target.value })
     }
 
@@ -145,38 +158,50 @@ class ArtistPage extends React.Component {
         return (
             <div>
                 <MenuBar />
-                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
+                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' ,color:'FA5047'}}>
                     <Row>
-                        <Col flex={2}><FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                        <Col flex={2}><FormGroup style={{ width: '6vw', margin: '0 auto' }}>
                             <label>Artist Name</label>
-                            <FormInput placeholder="Artist Name" value={this.state.artistNameQuery} onChange={this.handleArtistNameQueryChange} />
+                            <FormInput placeholder="Artist" value={this.state.artistNameQuery} onChange={this.handleArtistNameQueryChange} />
                         </FormGroup></Col>
                         <Col flex={2}>
-                            <FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
+                                <label>Genre</label>
+                                <FormInput placeholder="Genre" value={this.state.certainYearQuery} onChange={this.handleGenreQueryChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
                             <label>Year</label>
-                            <FormInput placeholder="Certain Year" value={this.state.certainYearQuery} onChange={this.handleYearQueryChange} />
+                            <FormInput placeholder="Year" value={this.state.certainYearQuery} onChange={this.handleYearQueryChange} />
                         </FormGroup>
                         </Col>
                         <Col flex={2}>
-                            <FormGroup style={{ width: '8vw', margin: '0 auto' }}>
+                            <FormGroup style={{ width: '4vw', margin: '0 auto' }}>
                                 <label>Week</label>
                                 <FormInput placeholder="Week" value={this.state.weekQuery} onChange={this.handleWeekChange} />
                             </FormGroup>
                         </Col>
                         <Col flex={2}>
-                            <FormGroup style={{ width: '8vw', margin: '0 auto' }}>
-                                <label>Album Num</label>
+                            <FormGroup style={{ width: '4vw', margin: '0 auto' }}>
+                                <label>gender</label>
+                                <FormInput placeholder="gender" value={this.state.certainYearQuery} onChange={this.handleGenderQueryChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '4vw', margin: '0 auto' }}>
+                                <label>Album</label>
                                 <FormInput placeholder="Album" value={this.state.albumThresholdQuery} onChange={this.handleAlbumQueryChange} />
                             </FormGroup>
                         </Col>
                         <Col flex={2}>
-                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
                                 <label>Popularity</label>
                                 <FormInput placeholder="Popularity" value={this.state.popThreshold} onChange={this.handlePopThresholdChange} />
                             </FormGroup>
                         </Col>
                         <Col flex={2}>
-                            <FormGroup style={{ width: '10vw', margin: '0 auto' }}>
+                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
                                 <label>Followers</label>
                                 <FormInput placeholder="Followers" value={this.state.folThreshold} onChange={this.handleFollowerThresholdChange} />
                             </FormGroup>
@@ -191,7 +216,6 @@ class ArtistPage extends React.Component {
                         </Col>
                     </Row>
                 </Form>
-
                 <br></br>
                 <Divider />
                 <Table onRow={(record, rowIndex) => {

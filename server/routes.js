@@ -16,6 +16,7 @@ connection.connect();
 async function search_artist(req,res)
 {
     const genre=req.query.genre?req.query.genre:'%pop%'
+    const gender=req.query.gender?req.query.gender:'F'
     const certainYear=req.query.certainYear?req.query.certainYear:2013
     const weeks=req.query.weeks?req.query.weeks:2
     const albumThreshold = req.query.albumThreshold?req.query.albumThreshold:1;
@@ -28,7 +29,7 @@ async function search_artist(req,res)
          WHERE A.artistName=awarded_artist.artist AND awarded_artist.GrammyYear=${certainYear}
          and A.numAlbums > ${albumThreshold} )
          SELECT artist FROM Billboard JOIN Artist ON Billboard.artist=Artist.artistName,GrammyArtist
-         WHERE Artist.gender= "F" AND Artist.genres like "${genre}" AND Artist.artistName=GrammyArtist.artistName
+         WHERE Artist.gender= ${gender} AND Artist.genres like "${genre}" AND Artist.artistName=GrammyArtist.artistName
           HAVING count(*)>${weeks}`,function(error,results,fields)
         {
             if(error)
