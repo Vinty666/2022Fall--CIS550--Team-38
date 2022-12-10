@@ -22,7 +22,6 @@ const searchCoCooperator=async(artist,folThreshold,hitsThreshold)=>{
 }
 
 const searchTopSongs=async(genre)=>{
-
     var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopSong/${genre}`,{
         method:'GET'
     })
@@ -30,6 +29,8 @@ const searchTopSongs=async(genre)=>{
 }
 
 const searchSpecificSong = async(year)=>{
+    const tmp = `http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`;
+    console.log(tmp)
     var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`,{
         method:'GET'
     })

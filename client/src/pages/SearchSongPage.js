@@ -37,7 +37,8 @@ class SearchSongPage extends React.Component {
         window.location = `/matches?id=${matchId}`
     }
     updateSearchResults() {
-        searchSpecificSong(this.state.homeQuery).then(res => {
+        const year = this.state.homeQuery ? this.state.homeQuery : '2010';
+        searchSpecificSong(year).then(res => {
             this.setState({ matchesResults: res.results })
         })
     }
@@ -51,8 +52,8 @@ class SearchSongPage extends React.Component {
                 <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Year</label>
-                            <FormInput placeholder="Year" value={this.state.homeQuery} onChange={this.handleHomeQueryChange} />
+                            <label>Specific billboard songs which win grammy at least once at certain year</label>
+                            <FormInput placeholder="Year (default 2010)" value={this.state.homeQuery} onChange={this.handleHomeQueryChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
                             <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchResults}>Search Song</Button>

@@ -37,7 +37,9 @@ class TopSongPage extends React.Component {
         window.location = `/matches?id=${matchId}`
     }
     updateSearchResults() {
-        searchTopSongs(this.state.homeQuery).then(res => {
+        const genre = this.state.homeQuery ? this.state.homeQuery : 'Pop';
+        searchTopSongs(genre).then(res => {
+            console.log(res);
             this.setState({ matchesResults: res.results })
         })
     }
@@ -51,8 +53,8 @@ class TopSongPage extends React.Component {
                 <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' }}>
                     <Row>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <label>Genre</label>
-                            <FormInput placeholder="eg: Pop" value={this.state.homeQuery} onChange={this.handleHomeQueryChange} />
+                            <label>Genre (eg: Country, Rap, etc.)</label>
+                            <FormInput placeholder="default: Pop" value={this.state.homeQuery} onChange={this.handleHomeQueryChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
                             <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchResults}>Search Song</Button>
