@@ -16,7 +16,6 @@ connection.connect();
 async function search_artist(req,res)
 {
     const genre=req.query.genre?req.query.genre:'%pop%'
-    const gender=req.query.gender?req.query.gender:'F'
     const certainYear=req.query.certainYear?req.query.certainYear:2013
     const weeks=req.query.weeks?req.query.weeks:2
     const albumThreshold = req.query.albumThreshold?req.query.albumThreshold:1;
@@ -29,7 +28,7 @@ async function search_artist(req,res)
          WHERE A.artistName=awarded_artist.artist AND awarded_artist.GrammyYear=${certainYear}
          and A.numAlbums > ${albumThreshold} )
          SELECT artist FROM Billboard JOIN Artist ON Billboard.artist=Artist.artistName,GrammyArtist
-         WHERE Artist.gender= ${gender} AND Artist.genres like "${genre}" AND Artist.artistName=GrammyArtist.artistName
+         WHERE Artist.gender= "F" AND Artist.genres like "${genre}" AND Artist.artistName=GrammyArtist.artistName
           HAVING count(*)>${weeks}`,function(error,results,fields)
         {
             if(error)
@@ -47,8 +46,8 @@ async function search_artist(req,res)
 async function search_collaborators(req,res)
 {
     const artist=req.params.artist;
-    const popThreshold= req.query.popThreshold?req.query.popThreshold:30
-    const folThreshold=req.query.folThreshold?req.query.folThreshold:50000
+    const popThreshold= req.query.popThreshold?req.query.popThreshold:0
+    const folThreshold=req.query.folThreshold?req.query.folThreshold:0
 
     connection.query(
         `WITH TargetArtistWork AS ( SELECT name, date FROM Billboard WHERE artist = "${artist}"), 
@@ -60,10 +59,10 @@ async function search_collaborators(req,res)
          (SELECT S.artist as artist, S. songName as song 
          FROM SongAttributes S 
          WHERE S.popularity >= ${popThreshold}) FamousCollabSongs ON songs = FamousCollabSongs.song )
-         SELECT DISTINCT FamousCollab.artists, FamousCollab.songs 
+         SELECT DISTINCT FamousCollab.artists, FamousCollab.songs, FamousArtists.followers 
          FROM FamousCollab 
          INNER JOIN
-         (SELECT artistName FROM Artist 
+         (SELECT artistName, followers FROM Artist 
          WHERE followers >= ${folThreshold}) FamousArtists ON FamousArtists.artistName = FamousCollab.artists;`,
         function(error,results,fields)
         {
@@ -87,8 +86,8 @@ async function search_collaborators(req,res)
 async function search_co_cooperator(req, res) {
 
     const artist = req.params.artist
-    const fol_threshold = req.query.fol_threshold ? req.query.fol_threshold : "50000"
-    const hits_threshold = req.query.hits_threshold ? req.query.hits_threshold : "20"
+    const folThreshold = req.query.fol_threshold ? req.query.fol_threshold : 0
+    const hitsThreshold = req.query.hits_threshold ? req.query.hits_threshold : 0
 
     connection.query( `
     WITH TargetArtistWork AS
@@ -112,10 +111,10 @@ async function search_co_cooperator(req, res) {
     FamousArtist AS
     ( SELECT DISTINCT artist, name FROM CO2_artist_song
     INNER JOIN (SELECT artistName FROM Artist WHERE followers >=
-    ${fol_threshold}) Famous ON Famous.artistName = artist )
+    ${folThreshold}) Famous ON Famous.artistName = artist )
     SELECT artist FROM (SELECT artist, COUNT(name) AS hitSongNum
     FROM FamousArtist GROUP BY artist) famousCO2hitsNum WHERE
-    hitSongNum >= ${hits_threshold} AND artist !=
+    hitSongNum >= ${hitsThreshold} AND artist !=
     '${artist}';`, function (error, results, fields) {
 
         if (error) {
@@ -132,7 +131,7 @@ async function search_co_cooperator(req, res) {
 // Find top 5 hit songs has given genre (inputGenre)
 async function search_top_songs(req, res) {
 
-    const inputGenre = req.params.genre ? req.params.genre : 'Pop'
+    const inputGenre = req.query.genre ? req.query.genre : 'Pop'
 
     const t = '%'
 
@@ -276,6 +275,85 @@ async function searchTopArtists (req, res) {
     });
 }
 
+// new query 11 -> ArtistDetails page
+// Select * from artist, join with billboard to get this artist's number of hits
+async function searchArtistDetails (req, res) {
+    const artist = req.params.artist
+    connection.query(`SELECT * FROM Artist LEFT JOIN (SELECT artist, COUNT(DISTINCT name) AS hits_num, GROUP_CONCAT(DISTINCT name SEPARATOR ', ') AS hits FROM Billboard GROUP BY artist) B
+    ON Artist.artistName=B.artist
+    WHERE artistName = '${artist}'`, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({error:error})
+        } else if (results) {
+            res.json({results: results })
+        }   
+    });
+}
+
+// new query 12 -> ArtistDetails page
+// select grammy-winning albums by artist name
+async function searchArtistGrammyAlbum (req, res) {
+    const artist = req.params.artist
+    connection.query(`SELECT * FROM GrammyAlbum WHERE artist = '${artist}'`, function(error, results, fields){
+        if (error) {
+            console.log(error)
+        } else if (results) {
+            res.json({results:results})
+        }
+    })
+}
+
+// new query 13 -> ArtistDetails page
+// select grammy-winning songs by artist name
+async function searchArtistGrammySong (req, res) {
+    const artist = req.params.artist
+    connection.query(`SELECT * FROM GrammySong WHERE artist = '${artist}'`, function(error, results, fields){
+        if (error) {
+            console.log(error)
+        } else if (results) {
+            res.json({results:results})
+        }
+    })
+}
+
+// new query 14-16 -> SongDetails page
+async function searchSongDetails (req, res) {
+    const songName = req.params.songName
+    const artist = req.params.artist
+    connection.query(`SELECT * FROM SongAttributes WHERE songName = '${songName}' AND artist = '${artist}'`, function(error, results, fields){
+        if (error) {
+            console.log(error)
+        } else if (results) {
+            res.json({results:results})
+        }
+    })
+}
+
+async function searchSongGrammy (req, res) {
+    const songName = req.params.songName
+    const artist = req.params.artist
+    connection.query(`SELECT * FROM GrammySong WHERE songName = '${songName}' AND artist = '${artist}'`, function(error, results, fields){
+        if (error) {
+            console.log(error)
+        } else if (results) {
+            res.json({results:results})
+        }
+    })
+}
+
+async function searchSongBillboard (req, res) {
+    const songName = req.params.songName
+    const artist = req.params.artist
+    connection.query(`SELECT genre, peakPosition, weeklyRank, week, lyric FROM Billboard WHERE name = '${songName}' AND artist = '${artist}'`, function(error, results, fields){
+        if (error) {
+            console.log(error)
+        } else if (results) {
+            res.json({results:results})
+        }
+    })
+}
+
 
 module.exports = {
     grammyAlbumsWithinTime,
@@ -287,5 +365,11 @@ module.exports = {
     search_collaborators,
     search_specific_songs,
     search_top_songs,
-    search_co_cooperator
+    search_co_cooperator,
+    searchArtistDetails,
+    searchArtistGrammyAlbum,
+    searchArtistGrammySong,
+    searchSongDetails,
+    searchSongGrammy,
+    searchSongBillboard
 }

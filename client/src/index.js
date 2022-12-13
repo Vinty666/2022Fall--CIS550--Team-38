@@ -10,6 +10,8 @@ import HomePage from './pages/HomePage';
 import ArtistPage from './pages/ArtistPage';
 
 import SearchSongPage from './pages/SearchSongPage';
+import ArtistDetailsPage from './pages/ArtistDetails';
+import SongDetailsPage from './pages/SongDetails';
 
 import TopSongPage from './pages/TopSongPage';
 import 'antd/dist/antd.css';
@@ -46,6 +48,16 @@ ReactDOM.render(
 							path="/top_song"
 							render={() => (
 								<TopSongPage />
+							)}/>
+		<Route exact 
+							path="/artist_details"
+							render={() => (
+								<ArtistDetailsPage />
+							)}/>
+		<Route exact 
+							path="/song_details"
+							render={() => (
+								<SongDetailsPage />
 							)}/>
       </Switch>
     </Router>

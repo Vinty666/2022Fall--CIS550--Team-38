@@ -15,10 +15,10 @@ app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 app.get('/getArtist',routes.search_artist)
 
 //Query 2
-app.get('/getArtist/cooperators/:artist',routes.search_collaborators)
+app.get('/artist_details/getCollaborators/:artist',routes.search_collaborators)
 
 // Query 3 - register as GET
-app.get('/getArtist/coCooperators/:artist', routes.search_co_cooperator)
+app.get('/artist_details/getPotentialCollaborators/:artist', routes.search_co_cooperator)
 
 // Query 4 - register as GET
 app.get('/getTopSong/:genre',routes.search_top_songs)
@@ -40,6 +40,24 @@ app.get('/getAlbum/genre', routes.grammyAlbumsWithinTime)
 
 // Query 10
 app.get('/getTopArtists', routes.searchTopArtists)
+
+// new query 11 -> ArtistDetails page
+app.get('/artist_details/:artist', routes.searchArtistDetails)
+
+// new query 12 -> ArtistDetails page's grammy album
+app.get('/artist_details/getGrammyAlbums/:artist', routes.searchArtistGrammyAlbum)
+
+// new query 13 -> ArtistDetails page's grammy song
+app.get('/artist_details/getGrammySongs/:artist', routes.searchArtistGrammySong)
+
+// new query 14 -> SongDetails page
+app.get('/song_details/getSongDetails/:songName/:artist', routes.searchSongDetails)
+
+// new query 15 -> SongDetails page -> song grammy info
+app.get('/song_details/grammy/:songName/:artist', routes.searchSongGrammy)
+
+// new query 16 -> SongDetails page -> song billboard info
+app.get('/song_details/billboard/:songName/:artist', routes.searchSongBillboard)
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);

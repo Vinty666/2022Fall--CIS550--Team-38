@@ -1,27 +1,82 @@
 import config from './config.json'
 
-const searchArtist=async(genre,gender,certainYear,weeks,albumThreshold)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&gender=${gender}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
+const searchArtist=async(genre,certainYear,weeks,albumThreshold)=>{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
         method:'GET'
     })
     return res.json();
 }
 
+// In ArtistDetails page
 const searchCollaborators=async(artist,popThreshold,folThreshold)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist/cooperators?artist=${artist}&popThreshold=${popThreshold}&folThreshold=${folThreshold}`,{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/artist_details/getCollaborators/${artist}?popThreshold=${popThreshold}&folThreshold=${folThreshold}`,{
         method:'GET'
     })
     return res.json();
 }
 
+// In ArtistDetails page
 const searchCoCooperator=async(artist,folThreshold,hitsThreshold)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist/coCooperators?artist=${artist}&fol_threshold=${folThreshold}&hits_threshold=${hitsThreshold}`,{
+    console.log(artist, hitsThreshold, folThreshold)
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/artist_details/getPotentialCollaborators/${artist}?fol_threshold=${folThreshold}&hits_threshold=${hitsThreshold}`,{
         method:'GET'
     })
     return res.json();
 }
+
+// In ArtistDetails page
+const getArtistDetailsSearch=async(artist)=>{
+    
+    const url = `http://${config.server_host}:${config.server_port}/artist_details/${artist}`
+    console.log("start fetching", artist, url)
+    var res=await fetch(url, {method: 'GET'})
+    const results = await res.json();
+    return results;
+}
+
+// In ArtistDetails page
+const getArtistGrammyAlbumSearch=async(artist)=>{
+    const url = `http://${config.server_host}:${config.server_port}/artist_details/getGrammyAlbums/${artist}`
+    var res=await fetch(url, {method: 'GET'})
+    const results = await res.json();
+    return results;
+}
+
+// In ArtistDetails page
+const getArtistGrammySongSearch=async(artist)=>{
+    const url = `http://${config.server_host}:${config.server_port}/artist_details/getGrammySongs/${artist}`
+    var res=await fetch(url, {method: 'GET'})
+    const results = await res.json();
+    return results;
+}
+
+// In SongDetails page
+const getSongDetailsSearch=async(songName, artist)=>{
+    const url = `http://${config.server_host}:${config.server_port}/song_details/getSongDetails/${songName}/${artist}`
+    var res=await fetch(url, {method: 'GET'})
+    const results = await res.json();
+    return results;
+}
+
+// In SongDetails page 
+const getSongGrammySearch=async(songName, artist)=>{
+    const url = `http://${config.server_host}:${config.server_port}/song_details/grammy/${songName}/${artist}`
+    var res=await fetch(url, {method: 'GET'})
+    const results = await res.json();
+    return results;
+}
+
+// In SongDetails page 
+const getSongBillboardSongSearch=async(songName, artist)=>{
+    const url = `http://${config.server_host}:${config.server_port}/song_details/billboard/${songName}/${artist}`
+    var res=await fetch(url, {method: 'GET'})
+    const results = await res.json();
+    return results;
+}
+
 
 const searchTopSongs=async(genre)=>{
+
     var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopSong/${genre}`,{
         method:'GET'
     })
@@ -29,8 +84,6 @@ const searchTopSongs=async(genre)=>{
 }
 
 const searchSpecificSong = async(year)=>{
-    const tmp = `http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`;
-    console.log(tmp)
     var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`,{
         method:'GET'
     })
@@ -88,4 +141,10 @@ export {
     searchArtistsGrammyWithTimeDiff,
     getGrammyAlbumsWithinTime,
     searchTopArtist,
+    getArtistDetailsSearch,
+    getArtistGrammyAlbumSearch,
+    getArtistGrammySongSearch,
+    getSongDetailsSearch,
+    getSongGrammySearch,
+    getSongBillboardSongSearch
 }
