@@ -12,6 +12,8 @@ import ArtistPage from './pages/ArtistPage';
 import SearchSongPage from './pages/SearchSongPage';
 import ArtistDetailsPage from './pages/ArtistDetails';
 import SongDetailsPage from './pages/SongDetails';
+import ArtistPage from './pages/ArtistPage';
+import SongPage from './pages/SongPage'
 
 import TopSongPage from './pages/TopSongPage';
 import 'antd/dist/antd.css';
@@ -30,14 +32,14 @@ ReactDOM.render(
 								<HomePage />
 							)}/>
         <Route exact
-							path="/players"
+							path="/artists"
 							render={() => (
 								<ArtistPage />
 							)}/>
         <Route exact
-							path="/matches"
+							path="/songs"
 							render={() => (
-								<MatchesPage />
+								<SongPage />
 							)}/>
         <Route exact
 							path="/search_song"

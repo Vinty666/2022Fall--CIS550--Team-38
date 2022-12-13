@@ -11,8 +11,11 @@ const app = express();
 // whitelist localhost 3000
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
 
-//Query 1
-app.get('/getArtist',routes.search_artist)
+//Route 1
+app.get('/getArtists',routes.search_artists)
+
+//Route 2
+app.get('/getSongs', routes.search_songs)
 
 //Query 2
 app.get('/artist_details/getCollaborators/:artist',routes.search_collaborators)
@@ -20,26 +23,11 @@ app.get('/artist_details/getCollaborators/:artist',routes.search_collaborators)
 // Query 3 - register as GET
 app.get('/artist_details/getPotentialCollaborators/:artist', routes.search_co_cooperator)
 
-// Query 4 - register as GET
-app.get('/getTopSong/:genre',routes.search_top_songs)
-
-// Query 5 - register as GET
-app.get('/getSongsByYear/:year', routes.search_specific_songs)
-
-// Query 6
-app.get('/getArtistsByFollowers', routes.searchArtistsWithFollowers)
-
 // Query 7
-app.get('/getArtistsByPopularitySongs', routes.searchArtistsWithPopularitySongs)
+app.get('/getArtistsByPopularSongs', routes.searchArtistsWithPopularitySongs)
 
 // Query 8
-app.get('/getGrammyArtists', routes.searchArtistsGrammyWithTimeDiff)
-
-// Query 9
-app.get('/getAlbum/genre', routes.grammyAlbumsWithinTime)
-
-// Query 10
-app.get('/getTopArtists', routes.searchTopArtists)
+app.get('/getGrammyArtistsTrending', routes.searchArtistsGrammyWithTimeDiff)
 
 // new query 11 -> ArtistDetails page
 app.get('/artist_details/:artist', routes.searchArtistDetails)

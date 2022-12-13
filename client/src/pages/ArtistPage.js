@@ -1,52 +1,50 @@
 import React from 'react';
-import { Form, FormInput, FormGroup, Button, Card, CardBody, CardTitle, Progress } from "shards-react";
+import { Form, FormInput, FormGroup, Button } from "shards-react";
 
 import {
     Table,
-    Pagination,
+    Checkbox,
     Select,
     Row,
     Col,
     Divider,
     Slider,
-    Rate
 } from 'antd'
 
-import { RadarChart } from 'react-vis';
-import { format } from 'd3-format';
+
 import MenuBar from '../components/MenuBar';
 import {
     searchArtist,
-    searchCollaborators,
-    searchTopArtist,
-    searchArtistWithFollowers,
-    searchArtistsWithPopularitySongs,
-    searchCoCooperator
 } from '../fetcher'
-const wideFormat = format('.3r');
-const { Column } = Table;
 
-const ArtistColumns = [
+
+const { Option } = Select;
+
+const artistColumns = [
     {
-        title: 'Name',
-        dataIndex: 'Name',
-        key: 'Name',
-        sorter: (a, b) => a.Name.localeCompare(b.Name),
-        render: (text, row) => <a href={`/players?id=${row.PlayerId}`}>{text}</a>
+        title: 'Artist',
+        dataIndex: 'artist',
+        key: 'artist',
+        sorter: (a, b) => a.artist.localeCompare(b.artist),
+        render: (text, row) => <a href={`/artistsDetail/${row.artist}`}>{text}</a>
     },
     {
-        title: 'Nationality',
-        dataIndex: 'Nationality',
-        key: 'Nationality',
-        sorter: (a, b) => a.Nationality.localeCompare(b.Nationality)
+        title: 'Followers',
+        dataIndex: 'followers',
+        key: 'followers',
+        sorter: (a, b) => a.followers - b.followers
     },
     {
-        title: 'Rating',
-        dataIndex: 'Rating',
-        key: 'Rating',
-        sorter: (a, b) => a.Rating - b.Rating
-
-    }
+        title: 'Number of Albums',
+        dataIndex: 'numAlbums',
+        key: 'numAlbums',
+        sorter: (a, b) => a.numAlbums - b.numAlbums
+    },
+    {
+        title: 'Group/Solo',
+        dataIndex: 'GroupSolo',
+        key: 'GroupSolo',
+    },
 ];
 
 
@@ -54,195 +52,115 @@ class ArtistPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            artistNameQuery: '',
-            certainYearQuery:'',
-            genreQuery:'',
-            weekQuery:'',
-            albumThresholdQuery:'',
-            genderQuery:'',
-            popThreshold:'',
-            folThreshold:'',
-            hitsThreshold:'',
+            artistNameQuery: "",
+            albums: 0,
+            genreQuery: "",
+            folThreshold: 0,
+            billboard: false,
+            grammy: false,
 
             ArtistResults: [],
-            CollaboratorResults:[],
-            co_CollaboratorResults:[]
         }
         //Add here
-        this.handleGenderQueryChange=this.handleGenderQueryChange.bind(this)
-        this.handleGenreQueryChange=this.handleGenreQueryChange.bind(this)
-        this.updateSearchArtistResults = this.updateSearchArtistResults.bind(this)
-        this.updateCollaboratorResults=this.updateCollaboratorResults.bind(this)
         this.handleArtistNameQueryChange = this.handleArtistNameQueryChange.bind(this)
-        this.handleAlbumQueryChange=this.handleAlbumQueryChange.bind(this)
-        this.handleYearQueryChange=this.handleYearQueryChange.bind(this)
-        this.handleWeekChange=this.handleWeekChange.bind(this)
-        this.handlePopThresholdChange=this.handlePopThresholdChange.bind(this)
-        this.handleFollowerThresholdChange=this.handleFollowerThresholdChange.bind(this)
-        this.handleHitsThresholdChange=this.handleHitsThresholdChange.bind(this)
-        this.goToMatch = this.goToMatch.bind(this)
+        this.handleAlbumsQueryChange = this.handleAlbumsQueryChange.bind(this)
+        this.handleGenreQueryChange = this.handleGenreQueryChange.bind(this)
+        this.handleFollowerThresholdChange = this.handleFollowerThresholdChange.bind(this)
+        this.handleBillBoardCheckChange = this.handleBillBoardCheckChange.bind(this)
+        this.handleGrammyCheckChange = this.handleGrammyCheckChange.bind(this)
+        this.updateSearchArtistResults = this.updateSearchArtistResults.bind(this)
     }
 
-    handleYearQueryChange(event)
-    {
-        this.setState({certainYearQuery:event.target.value})
+    handleAlbumsQueryChange(value) {
+        this.setState({ albums: value })
     }
 
-    handleGenreQueryChange(event)
-    {
-        this.setState({genreQuery:event.target.value})
-    }
-    handleGenderQueryChange(event)
-    {
-        this.setState({genderQuery:event.target.value})
-    }
-    handleWeekChange(event)
-    {
-        this.setState({weekQuery:event.target.value})
+    handleGenreQueryChange(value) {
+        this.setState({ genreQuery: value })
     }
 
-    handleArtistNameQueryChange(event)
-    {
+    handleArtistNameQueryChange(event) {
         this.setState({ artistNameQuery: event.target.value })
     }
 
-    handleAlbumQueryChange(event)
-    {
-        this.setState({albumThresholdQuery: event.target.value})
+    handleFollowerThresholdChange(value) {
+        this.setState({ folThreshold: value })
     }
 
-    handlePopThresholdChange(event)
-    {
-        this.setState({popThreshold:event.target.value})
-    }
-    handleFollowerThresholdChange(event)
-    {
-        this.setState({folThreshold:event.target.value})
-    }
-    handleHitsThresholdChange(event)
-    {
-        this.setState({hitThreshold:event.target.value})
+    handleBillBoardCheckChange(event) {
+        this.setState({ billboard: event.target.checked })
     }
 
-    goToMatch(matchId) {
-        window.location = `/matches?id=${matchId}`
+    handleGrammyCheckChange(event) {
+        this.setState({ grammy: event.target.checked })
     }
 
     updateSearchArtistResults() {
-        //TASK 23: call getPlayerSearch and update playerResults in state. See componentDidMount() for a hint
-        //Query 1
-        searchArtist(this.artistNameQuery,this.certainYearQuery,this.weekQuery,this.albumThresholdQuery).then(res=>{
-            this.setState({ArtistResults:res})
-        })
-
-        // searchArtistWithFollowers(this.folThreshold).then(res=> {
-        //     this.setState({ArtistResults:res})
-        // })
-    }
-    updateCollaboratorResults()
-    {
-        searchCollaborators(this.artistNameQuery,this.popThreshold,this.folThreshold).then(res=>{
-            this.setState({CollaboratorResults:res})
-        })
-
-        searchCoCooperator(this.artistNameQuery,this.folThreshold,this.hitsThreshold).then(res=>{
-            this.setState({co_CollaboratorResults:res})
+        searchArtist(this.state.billboard, this.state.grammy, this.state.artistNameQuery, this.state.genreQuery, this.state.folThreshold, this.state.albums).then(res => {
+            this.setState({ ArtistResults: res.results })
         })
     }
+
     componentDidMount() {
-        // TASK 25: call getPlayer with the appropriate parameter and set update the correct state variable.
-        // See the usage of getMatch in the componentDidMount method of MatchesPage for a hint!
+        searchArtist(this.state.billboard, this.state.grammy, this.state.artistNameQuery, this.state.genreQuery, this.state.folThreshold, this.state.albums).then(res => {
+            this.setState({ ArtistResults: res.results })
+        })
     }
 
     render() {
         return (
             <div>
                 <MenuBar />
-                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh' ,color:'FA5047'}}>
+                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh', color: 'FA5047' }}>
                     <Row>
-                        <Col flex={2}><FormGroup style={{ width: '6vw', margin: '0 auto' }}>
-                            <label>Artist Name</label>
-                            <FormInput placeholder="Artist" value={this.state.artistNameQuery} onChange={this.handleArtistNameQueryChange} />
-                        </FormGroup></Col>
                         <Col flex={2}>
-                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
+                            <FormGroup style={{ width: '12vw', margin: '0 10px' }}>
+                                <label>Artist</label>
+                                <FormInput placeholder="Artist name" value={this.state.artistNameQuery} onChange={this.handleArtistNameQueryChange} />
+                            </FormGroup>
+                        </Col>
+                        <Col flex={2}>
+                            <FormGroup style={{ width: '12vw', margin: '0 10px' }}>
                                 <label>Genre</label>
-                                <FormInput placeholder="Genre" value={this.state.certainYearQuery} onChange={this.handleGenreQueryChange} />
+                                <Select defaultValue="" style={{ width: '12vw', margin: '0 auto' }} onChange={this.handleGenreQueryChange}>
+                                    <Option value="">all</Option>
+                                    <Option value="pop">pop</Option>
+                                    <Option value="rap">rap</Option>
+                                    <Option value="soul">soul</Option>
+                                    <Option value="r&b">blues</Option>
+                                    <Option value="punk">punk</Option>
+                                    <Option value="rock">rock</Option>
+                                    <Option value="metal">metal</Option>
+                                </Select>
                             </FormGroup>
                         </Col>
-                        <Col flex={2}>
-                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
-                            <label>Year</label>
-                            <FormInput placeholder="Year" value={this.state.certainYearQuery} onChange={this.handleYearQueryChange} />
-                        </FormGroup>
-                        </Col>
-                        <Col flex={2}>
-                            <FormGroup style={{ width: '4vw', margin: '0 auto' }}>
-                                <label>Week</label>
-                                <FormInput placeholder="Week" value={this.state.weekQuery} onChange={this.handleWeekChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col flex={2}>
-                            <FormGroup style={{ width: '4vw', margin: '0 auto' }}>
-                                <label>gender</label>
-                                <FormInput placeholder="gender" value={this.state.certainYearQuery} onChange={this.handleGenderQueryChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col flex={2}>
-                            <FormGroup style={{ width: '4vw', margin: '0 auto' }}>
-                                <label>Album</label>
-                                <FormInput placeholder="Album" value={this.state.albumThresholdQuery} onChange={this.handleAlbumQueryChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col flex={2}>
-                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
-                                <label>Popularity</label>
-                                <FormInput placeholder="Popularity" value={this.state.popThreshold} onChange={this.handlePopThresholdChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col flex={2}>
-                            <FormGroup style={{ width: '6vw', margin: '0 auto' }}>
-                                <label>Followers</label>
-                                <FormInput placeholder="Followers" value={this.state.folThreshold} onChange={this.handleFollowerThresholdChange} />
-                            </FormGroup>
-                        </Col>
-                        <Col flex={2}><FormGroup style={{ width: '10vw' , color: 'black'}}>
-                            <Button style={{ marginTop: '4vh', font:'4pt' }} onClick={this.updateSearchArtistResults}>Search Artist</Button>
-                        </FormGroup>
-                        </Col>
-                        <Col flex={2}><FormGroup style={{ width: '14vw', color:'black' }}>
-                            <Button style={{ marginTop: '4vh' , font:'4pt'}} onClick={this.updateCollaboratorResults}>Search Collaborator</Button>
-                        </FormGroup>
-                        </Col>
+                        <Col flex={2} ><Checkbox style={{ margin: '30px 10px' }} onChange={this.handleBillBoardCheckChange}>
+                            Billboard
+                        </Checkbox></Col>
+                        <Col flex={2}><Checkbox style={{ margin: '30px 10px' }} onChange={this.handleGrammyCheckChange}>
+                            Grammy
+                        </Checkbox></Col>
+                    </Row>
+                    <Row>
+                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                            <label>Number of Albums</label>
+                            <Slider step={1} defaultValue={0} min={0} max={150} onChange={this.handleAlbumsQueryChange} />
+
+                        </FormGroup></Col>
+                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                            <label>Followers</label>
+                            <Slider step={10000} defaultValue={0} min={0} max={60000000} onChange={this.handleFollowerThresholdChange} />
+
+                        </FormGroup></Col>
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchArtistResults}>Search</Button>
+                        </FormGroup></Col>
+
                     </Row>
                 </Form>
                 <br></br>
                 <Divider />
-                <Table onRow={(record, rowIndex) => {
-                    return {
-                        onClick: event => { this.goToMatch(record.MatchId) },
-                    };
-                }} dataSource={this.state.ArtistResults} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }}>
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="Artist Name" dataIndex="Artist Name" key="Artist Name" />
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="" dataIndex="" key="" />
-                </Table>
-                <Divider />
-                <Table onRow={(record, rowIndex) => {
-                    return {
-                        onClick: event => { this.goToMatch(record.MatchId) },
-                    };
-                }} dataSource={this.state.CollaboratorResults} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }}>
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="Cooperator Name" dataIndex="Cooperator Name" key="Cooperator Name" />
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="" dataIndex="" key="" />
-                    <Column title="" dataIndex="" key="" />
-                </Table>
+                <Table dataSource={this.state.ArtistResults} columns={artistColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
             </div>
 
         )

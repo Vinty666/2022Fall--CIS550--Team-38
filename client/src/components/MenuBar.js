@@ -7,11 +7,11 @@ import {
     NavLink
   } from "shards-react";
 
-class MenuBar extends React.Component {
+  class MenuBar extends React.Component {
     render() {
         return(
             <Navbar type="dark" theme="primary" expand="md">
-        <NavbarBrand href="/">CIS 550 Final Project</NavbarBrand>
+        <NavbarBrand href="/">Music Wiki</NavbarBrand>
           <Nav navbar>
           <NavItem>
               <NavLink active href="/">
@@ -19,23 +19,13 @@ class MenuBar extends React.Component {
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active href="/players">
+              <NavLink active href="/artists">
                 Artists
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active  href="/matches" >
-                Albums
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink active href="/search_song">
-                WinningSongs
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink active href="/top_song">
-                TopSongs
+              <NavLink active  href="/songs" >
+                Songs
               </NavLink>
             </NavItem>
           </Nav>

@@ -12,37 +12,95 @@ const connection = mysql.createConnection({
 });
 connection.connect();
 
-//Query 1
-async function search_artist(req,res)
-{
-    const genre=req.query.genre?req.query.genre:'%pop%'
-    const certainYear=req.query.certainYear?req.query.certainYear:2013
-    const weeks=req.query.weeks?req.query.weeks:2
-    const albumThreshold = req.query.albumThreshold?req.query.albumThreshold:1;
+//Route 1
+async function search_artists(req, res) {
+    const billboard = req.query.billboard
+    const grammy = req.query.grammy
+    const genre = req.query.genre ? req.query.genre : '%%'
+    const numAlbums = req.query.numAlbums ? req.query.numAlbums : 0
+    const artist = req.query.artist ? req.query.artist : '%%'
+    const followers = req.query.followers ? req.query.followers : 0
 
-    connection.query(`
-        WITH GrammyArtist AS
-         ( SELECT A.artistName FROM Artist A,
-         ( SELECT artist,grammyYear FROM GrammyAlbum UNION SELECT artist,
-         grammyYear FROM GrammySong GROUP BY artist, grammyYear )AS awarded_artist
-         WHERE A.artistName=awarded_artist.artist AND awarded_artist.GrammyYear=${certainYear}
-         and A.numAlbums > ${albumThreshold} )
-         SELECT artist FROM Billboard JOIN Artist ON Billboard.artist=Artist.artistName,GrammyArtist
-         WHERE Artist.gender= "F" AND Artist.genres like "${genre}" AND Artist.artistName=GrammyArtist.artistName
-          HAVING count(*)>${weeks}`,function(error,results,fields)
-        {
-            if(error)
-            {
+
+    if (billboard === "false" && grammy === "false") {
+        connection.query(`SELECT artistName AS artist, followers, numAlbums, GroupSolo 
+        FROM Artist
+        WHERE artistName LIKE '%${artist}%' AND genres Like '%${genre}%' AND numAlbums >= ${numAlbums} AND followers >= ${followers}
+        ORDER BY followers DESC`, function (error, results, fields) {
+            if (error) {
                 console.log(error)
-                res.json({error:error})
-            } else if(results)
-            {
-                res.json({results:results})
+                res.json({ error: error })
+            } else if (results) {
+                console.log("1: " + results.length)
+                res.json({ results: results })
+            }
+        })
+    } else if (billboard === "false" && grammy === "true") {
+        connection.query(`WITH GrammyArtist AS
+            (SELECT artist AS artist FROM GrammyAlbum UNION SELECT artist FROM GrammySong)
+            SELECT DISTINCT artistName AS artist, followers, numAlbums, yearFirst_album AS year, GroupSolo FROM GrammyArtist g JOIN Artist a on g.artist=a.artistName
+            WHERE g.artist LIKE '%${artist}%' AND a.genres Like '%${genre}%' AND a.numAlbums >= ${numAlbums} AND a.followers >= ${followers}
+            ORDER BY followers DESC`, function (error, results, fields) {
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                console.log("2: " + results.length)
+                res.json({ results: results })
+            }
+        })
+    } else if (billboard === "true" && grammy === "false") {
+        connection.query(`
+            SELECT DISTINCT artistName AS artist, followers, numAlbums, yearFirst_album AS year, GroupSolo FROM Billboard b JOIN Artist a on b.artist=a.artistName
+            WHERE b.artist LIKE '%${artist}%' AND a.genres Like '%${genre}%' AND a.numAlbums >= ${numAlbums} AND a.followers >= ${followers}
+            ORDER BY followers DESC`, function (error, results, fields) {
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                console.log("3: " + results.length)
+                res.json({ results: results })
             }
         }
-    );
+        );
+    } else {
+        connection.query(`
+            WITH GrammyArtist AS
+            (SELECT artist FROM GrammyAlbum UNION SELECT artist FROM GrammySong)
+            SELECT DISTINCT artistName AS artist, followers, numAlbums, yearFirst_album AS year, GroupSolo FROM Billboard b JOIN GrammyArtist g ON b.artist=g.artist JOIN Artist a on b.artist=a.artistName
+            WHERE b.artist LIKE '%${artist}%' AND a.genres Like '%${genre}%' AND a.numAlbums >= ${numAlbums} AND a.followers >= ${followers} 
+            ORDER BY followers DESC`, function (error, results, fields) {
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                console.log("4: " + results.length)
+                res.json({ results: results })
+            }
+        }
+        );
+    }
 }
-//Query 2
+
+//Route 2
+async function search_songs(req, res) {
+    const genre = req.query.genre ? req.query.genre : '%%'
+    const song = req.query.song ? req.query.artist : '%%'
+    const year = req.query.year ? req.query.year : 2019
+    connection.query(`SELECT DISTINCT name as song, artist, genre
+        FROM Billboard
+        WHERE name LIKE '%${song}%' AND genre Like '%${genre}%' AND Year(week) = ${year}
+        ORDER BY song`, function (error, results, fields) {
+        if (error) {
+            console.log(error)
+            res.json({ error: error })
+        } else if (results) {
+            res.json({ results: results })
+        }
+    })
+}
+
+//Query 2 -> route 3
 async function search_collaborators(req,res)
 {
     const artist=req.params.artist;
@@ -78,7 +136,7 @@ async function search_collaborators(req,res)
 }
 
 
-//Query 3 (for CIS550 final course project)
+//Query 3 -> route 4
 // Description: 
 // To get potential collaborators: Select the co-artist of the
 // co-artist of an ${artist} where co-artists of co-artists have published at
@@ -126,85 +184,17 @@ async function search_co_cooperator(req, res) {
     });
 }
 
-// Query 4 (for CIS550 final course project)
-// Description: 
-// Find top 5 hit songs has given genre (inputGenre)
-async function search_top_songs(req, res) {
-
-    const inputGenre = req.query.genre ? req.query.genre : 'Pop'
-
-    const t = '%'
-
-    connection.query( `
-    SELECT DISTINCT name
-    FROM Billboard
-    WHERE genre LIKE '${t+inputGenre+t}'
-    LIMIT 5;`, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
-}
-
-
-//Query 5
-// Description: 
-// To show details of specific songs which are on billboard and
-// win grammy at least once at certain year, details including song attributes, artist name,
-// lyrics, grammyAward, etc..
-async function search_specific_songs(req, res) {
-
-    const year = req.params.year;
-
-    connection.query( `
-    SELECT DISTINCT s.songName, s.Artist, s.Danceability,
-    s.Duration, s.Energy, s.Liveness, b.lyric,
-    g.grammyAward, g.grammyYear
-    FROM SongAttributes s
-    INNER JOIN Billboard b
-    on s.songName = b.Name
-    INNER JOIN GrammySong g
-    on s.songName = g.songName
-    WHERE g.grammyYear = ${year}`, function (error, results, fields) {
-      if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
-}
-
-// Query 6: Show all artist that have followers large than a inputNumber
-async function searchArtistsWithFollowers(req, res) {
-    // TODO: TASK 6: implement and test, potentially writing your own (ungraded) tests
-    const followers = req.query.followers ? req.query.followers : 0
-    connection.query(`SELECT DISTINCT artistName, followers, genres 
-    FROM Artist 
-    WHERE followers > '${followers}'`, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
-}
-
 // Query 7: Show all artists that have followers large than some number, and have at least sepcific hit songs, whose average popularity is greater than some threshold.
+// route 5
 async function searchArtistsWithPopularitySongs(req, res) {
-    const followers = req.query.followers ? req.query.followers : 0;
-    const avg_popularity = req.query.popularity? req.query.popularity : 0;
-    const numOfSongs = req.query.numSongs? req.query.numSongs : 0;
+    const avg_popularity = req.query.popularity ? req.query.popularity : 0;
+    const numOfSongs = req.query.numSongs ? req.query.numSongs : 0;
     connection.query(`WITH cte AS (
         SELECT b.artist, b.name, a.followers
         FROM Billboard b, Artist a
-        WHERE b.artist = a.artistName and a.followers >= '${followers}'
+        WHERE b.artist = a.artistName
          )
-     SELECT c.artist, avg(popularity) AS avg_popularity, count(*) AS numOfSongs, followers
+     SELECT DISTINCT c.artist, avg(popularity) AS avg_popularity, count(*) AS numOfSongs, followers
      FROM cte c, SongAttributes s
      WHERE c.name = s.songName and s.artist = c.artist
      GROUP BY c.artist, c.name
@@ -220,15 +210,14 @@ async function searchArtistsWithPopularitySongs(req, res) {
 }
 
 // Query 8: Find all artists who won grammy awards with given time difference between their first billboard hit songs since 1999 and their first grammy-awarded song, sort by time difference
+// route 6
 async function searchArtistsGrammyWithTimeDiff(req, res) {
-    // TODO: TASK 6: implement and test, potentially writing your own (ungraded) tests
-    const yearDiff = req.query.yearDiff ? req.query.yearDiff : 0;
     connection.query(`SELECT b.artist, g.grammyYear, g.songName, (MIN(g.grammyYear) - MIN(substring(date, -4, 4))) AS yearDiff
     FROM Billboard b
     INNER JOIN GrammySong g
     on g.artist = b.artist
     Group By b.artist
-    HAVING yearDiff <= '${yearDiff}'
+    Having yearDiff >= 0
     Order by yearDiff DESC`, function (error, results, fields) {
         if (error) {
             console.log(error)
@@ -239,43 +228,8 @@ async function searchArtistsGrammyWithTimeDiff(req, res) {
     });
 }
 
-// Query 9
-async function grammyAlbumsWithinTime (req, res) {
-    const inputGenre = req.query.genre ? req.query.genre : "pop"
-    const startYear = req.query.startYear ? req.query.startYear : 1999
-    const endYear = req.query.endYear ? req.query.endYear : 2018
-    connection.query(`SELECT album, grammyYear 
-    FROM GrammyAlbum 
-    WHERE genre LIKE '${inputGenre}' and GrammyYear <= ${endYear} and GrammyYear >= ${startYear};`
-    , function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
-}
-
-// Query 10
-async function searchTopArtists (req, res) {
-    const artistName = req.query.artist ? req.query.artist : "%%"
-    connection.query(`SELECT artistName, followers 
-    FROM Artist 
-    WHERE artistName LIKE '%${artistName}%'
-    ORDER BY followers DESC 
-    LIMIT 10;`    
-    , function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    });
-}
-
 // new query 11 -> ArtistDetails page
+// route 7
 // Select * from artist, join with billboard to get this artist's number of hits
 async function searchArtistDetails (req, res) {
     const artist = req.params.artist
@@ -292,6 +246,7 @@ async function searchArtistDetails (req, res) {
 }
 
 // new query 12 -> ArtistDetails page
+// route 7
 // select grammy-winning albums by artist name
 async function searchArtistGrammyAlbum (req, res) {
     const artist = req.params.artist
@@ -305,6 +260,7 @@ async function searchArtistGrammyAlbum (req, res) {
 }
 
 // new query 13 -> ArtistDetails page
+// route 8
 // select grammy-winning songs by artist name
 async function searchArtistGrammySong (req, res) {
     const artist = req.params.artist
@@ -318,6 +274,7 @@ async function searchArtistGrammySong (req, res) {
 }
 
 // new query 14-16 -> SongDetails page
+// route 9
 async function searchSongDetails (req, res) {
     const songName = req.params.songName
     const artist = req.params.artist
@@ -330,6 +287,7 @@ async function searchSongDetails (req, res) {
     })
 }
 
+// route 10
 async function searchSongGrammy (req, res) {
     const songName = req.params.songName
     const artist = req.params.artist
@@ -342,6 +300,7 @@ async function searchSongGrammy (req, res) {
     })
 }
 
+// route 11
 async function searchSongBillboard (req, res) {
     const songName = req.params.songName
     const artist = req.params.artist
@@ -356,15 +315,11 @@ async function searchSongBillboard (req, res) {
 
 
 module.exports = {
-    grammyAlbumsWithinTime,
-    searchTopArtists,
-    searchArtistsWithFollowers,
     searchArtistsWithPopularitySongs,
     searchArtistsGrammyWithTimeDiff,
-    search_artist,
+    search_artists,
+    search_songs,
     search_collaborators,
-    search_specific_songs,
-    search_top_songs,
     search_co_cooperator,
     searchArtistDetails,
     searchArtistGrammyAlbum,

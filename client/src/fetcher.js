@@ -1,10 +1,40 @@
 import config from './config.json'
 
-const searchArtist=async(genre,certainYear,weeks,albumThreshold)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtist?genre=${genre}&certainYear=${certainYear}&weeks=${weeks}&albumThreshold=${albumThreshold}`,{
+//Route 1
+const searchArtist=async(billboard,grammy,artist,genre,followers,numAlbums)=>{
+    console.log(billboard, grammy, artist, genre, followers, numAlbums)
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtists?billboard=${billboard}&grammy=${grammy}&artist=${artist}&genre=${genre}&followers=${followers}&numAlbums=${numAlbums}`,{
         method:'GET'
     })
-    return res.json();
+    const result = await res.json()
+    return result;
+}
+
+//Route 2
+const searchSong=async(song, genre, year)=>{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongs?song=${song}&genre=${genre}&year=${year}`,{
+        method:'GET'
+    })
+    const result = await res.json()
+    return result;
+}
+
+//Route 3(query 7)
+const searchHitSongArtist=async(songNum, popularity)=>{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtistsByPopularSongs?numSongs=${songNum}&popularity=${popularity}`,{
+        method:'GET'
+    })
+    const result = await res.json()
+    return result;
+}
+
+//Route 4(query 8)
+const searchGrammyAwardTrending=async()=>{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getGrammyArtistsTrending`,{
+        method:'GET'
+    })
+    const result = await res.json()
+    return result;
 }
 
 // In ArtistDetails page
@@ -75,72 +105,13 @@ const getSongBillboardSongSearch=async(songName, artist)=>{
 }
 
 
-const searchTopSongs=async(genre)=>{
-
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopSong/${genre}`,{
-        method:'GET'
-    })
-    return res.json();
-}
-
-const searchSpecificSong = async(year)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongsByYear/${year}`,{
-        method:'GET'
-    })
-    return res.json();
-}
-
-const searchArtistWithFollowers=async(followers)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtistsByFollowers?followers=${followers}`,{
-        method:'GET'
-    })
-    return res.json();
-}
-
-const searchArtistsWithPopularitySongs=async(followers,avg_popularity,numOfSongs)=>
-{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getArtistsByPopularitySongs?followers=${followers}&avg_popularity=${avg_popularity}&numOfSongs=${numOfSongs}`,
-        {
-            method:'GET'
-        })
-    return res.json();
-}
-
-const searchArtistsGrammyWithTimeDiff=async(yearDiff)=>
-{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getGrammyArtists?yearDiff=${yearDiff}`,{
-        method:'GET'
-    })
-    return res.json();
-}
-
-const getGrammyAlbumsWithinTime=async(inputGenre,startYear,endYear)=>
-{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getAlbum/genre?inputGenre=${inputGenre}&startYear=${startYear}&endYear=${endYear}`,
-        {
-            method:'GET'
-        })
-    return res.json();
-}
-
-const searchTopArtist=async(artistName)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getTopArtists?artistName=${artistName}`,{
-        method:'GET'
-    })
-    return res.json();
-}
-
 export {
     searchArtist,
+    searchSong,
+    searchHitSongArtist,
+    searchGrammyAwardTrending,
     searchCollaborators,
-    searchTopSongs,
     searchCoCooperator,
-    searchSpecificSong,
-    searchArtistWithFollowers,
-    searchArtistsWithPopularitySongs,
-    searchArtistsGrammyWithTimeDiff,
-    getGrammyAlbumsWithinTime,
-    searchTopArtist,
     getArtistDetailsSearch,
     getArtistGrammyAlbumSearch,
     getArtistGrammySongSearch,

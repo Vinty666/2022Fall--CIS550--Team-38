@@ -1,40 +1,72 @@
 import React from 'react';
 import {
   Table,
-  Pagination,
-  Select
+  Row,
+  Col,
+  Slider,
 } from 'antd'
 
+import { FormGroup, Button } from "shards-react";
+
 import MenuBar from '../components/MenuBar';
-import {searchCollaborators, searchCoCooperator} from '../fetcher'
-const { Column, ColumnGroup } = Table;
-const { Option } = Select;
+import { searchHitSongArtist, searchGrammyAwardTrending } from '../fetcher'
 
 
-const playerColumns = [
+const artistColumns = [
   {
-    title: 'Name',
-    dataIndex: 'Name',
-    key: 'Name',
+    title: 'Artist',
+    dataIndex: 'artist',
+    key: 'Artist',
     sorter: (a, b) => a.Name.localeCompare(b.Name),
-    render: (text, row) => <a href={`/players?id=${row.PlayerId}`}>{text}</a>
+    render: (text, row) => <a href={`/artistsDetail/${row.artist}`}>{text}</a>
   },
   {
-    title: 'Nationality',
-    dataIndex: 'Nationality',
-    key: 'Nationality',
-    sorter: (a, b) => a.Nationality.localeCompare(b.Nationality)
+    title: 'Average popularity',
+    dataIndex: 'avg_popularity',
+    key: 'avg_popularity',
+    sorter: (a, b) => a.avg_popularity-b.avg_popularity
   },
   {
-    title: 'Rating',
-    dataIndex: 'Rating',
-    key: 'Rating',
-    sorter: (a, b) => a.Rating - b.Rating
-    
+    title: 'Number of Songs',
+    dataIndex: 'numOfSongs',
+    key: 'numOfSongs',
+    sorter: (a, b) => a.numOfSongs- b.numOfSongs
   },
-  // TASK 7: add a column for Potential, with the ability to (numerically) sort ,
-  // TASK 8: add a column for Club, with the ability to (alphabetically) sort 
-  // TASK 9: add a column for Value - no sorting required
+  {
+    title: 'Followers',
+    dataIndex: 'followers',
+    key: 'followers',
+    sorter: (a, b) => a.followers- b.followers
+  },
+];
+
+
+const songColumns = [
+  {
+    title: 'Artist',
+    dataIndex: 'artist',
+    key: 'Artist',
+    sorter: (a, b) => a.Name.localeCompare(b.Name),
+    render: (text, row) => <a href={`/artistsDetail/${row.artist}`}>{text}</a>
+  },
+  {
+    title: 'Awarded Song',
+    dataIndex: 'songName',
+    key: 'songName',
+    sorter: (a, b) => a.songName.localeCompare(b.songName)
+  },
+  {
+    title: 'Grammy Year',
+    dataIndex: 'grammyYear',
+    key: 'grammyYear',
+    sorter: (a, b) => a.grammyYear - b.grammyYear
+  },
+  {
+    title: 'Year Difference',
+    dataIndex: 'yearDiff',
+    key: 'yearDiff',
+    sorter: (a, b) => a.yearDiff - b.yearDiff
+  },
 ];
 
 class HomePage extends React.Component {
@@ -43,30 +75,41 @@ class HomePage extends React.Component {
     super(props)
 
     this.state = {
-      matchesResults: [],
-      matchesPageNumber: 1,
-      matchesPageSize: 10,
-      playersResults: [],
-      pagination: null  
+      songNum: 0,
+      popularity: 0,
+
+      artistResults: [],
+      songResults: [],
     }
 
-    this.leagueOnChange = this.leagueOnChange.bind(this)
-    this.goToMatch = this.goToMatch.bind(this)
+    this.handleSongNumChange = this.handleSongNumChange.bind(this)
+    this.handlePopularityChange = this.handlePopularityChange.bind(this)
+    this.updateArtistResults = this.updateArtistResults.bind(this)
   }
 
-
-  goToMatch(matchId) {
-    window.location = `/matches?id=${matchId}`
+  handleSongNumChange(value){
+    this.setState({songNum: value})
   }
 
-  leagueOnChange(value) {
-    // TASK 2: this value should be used as a parameter to call getAllMatches in fetcher.js with the parameters page and pageSize set to null
-    // then, matchesResults in state should be set to the results returned - see a similar function call in componentDidMount()
-    
+  handlePopularityChange(value){
+    this.setState({popularity: value})
+  }
+  
+  updateArtistResults(){
+    console.log("hello")
+    searchHitSongArtist(this.state.songNum, this.state.popularity).then(res=>{
+      this.setState({artistResults: res.results})
+    })
   }
 
   componentDidMount() {
+    searchHitSongArtist(this.state.songNum, this.state.popularity).then(res=>{
+      this.setState({artistResults: res.results})
+    })
 
+    searchGrammyAwardTrending().then(res=>[
+      this.setState({songResults: res.results})
+    ])
   }
 
 
@@ -74,31 +117,31 @@ class HomePage extends React.Component {
     return (
       <div>
         <MenuBar />
+        <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}><h3>Trending</h3></div>
+
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-          <h3>Players</h3>
-          <Table dataSource={this.state.playersResults} columns={playerColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}/>
+          <h4>Billboard Trend</h4>
+          <Row>
+            <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+              <label>Number of hit songs</label>
+              <Slider step={1} defaultValue={0} min={0} max={150} onChange={this.handleSongNumChange} />
+
+            </FormGroup></Col>
+            <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+              <label>Average song popularity</label>
+              <Slider step={1} defaultValue={0} min={0} max={100} onChange={this.handlePopularityChange} />
+
+            </FormGroup></Col>
+            <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+              <Button style={{ marginTop: '4vh' }} onClick={this.updateArtistResults}>Search</Button>
+            </FormGroup></Col>
+
+          </Row>
+          <Table dataSource={this.state.artistResults} columns={artistColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
         </div>
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
-          <h3>Matches</h3>
-          <Select defaultValue="D1" style={{ width: 120 }} onChange={this.leagueOnChange}>
-            <Option value="D1">Bundesliga</Option>
-             {/* TASK 3: Take a look at Dataset Information.md from MS1 and add other options to the selector here  */}
-          </Select>
-          <Table onRow={(record, rowIndex) => {
-    return {
-      onClick: event => {this.goToMatch(record.MatchId)}, // clicking a row takes the user to a detailed view of the match in the /matches page using the MatchId parameter  
-    };
-  }} dataSource={this.state.matchesResults} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }}>
-            <ColumnGroup title="Teams">
-              {/* TASK 4: correct the title for the 'Home' column and add a similar column for 'Away' team in this ColumnGroup */}
-              <Column title="H" dataIndex="Home" key="Home" sorter= {(a, b) => a.Home.localeCompare(b.Home)}/>
-            </ColumnGroup>
-            <ColumnGroup title="Goals">
-              {/* TASK 5: add columns for home and away goals in this ColumnGroup, with the ability to sort values in these columns numerically */}
-            </ColumnGroup>
-             {/* TASK 6: create two columns (independent - not in a column group) for the date and time. Do not add a sorting functionality */}
-          </Table>
-
+          <h4>Grammy Trend</h4>
+          <Table dataSource={this.state.songResults} columns={songColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
         </div>
 
 
