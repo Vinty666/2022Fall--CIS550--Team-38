@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, FormInput, FormGroup, Button, Card, CardBody, CardTitle, Progress } from "shards-react";
+import { Form, FormGroup, Button, Card, CardBody } from "shards-react";
 import {
     Table,
     Row,
@@ -7,9 +7,7 @@ import {
     Divider,
     Slider
 } from 'antd'
-
-import { RadarChart } from 'react-vis';
-import { format } from 'd3-format';
+import { useParams } from "react-router-dom";
 
 import MenuBar from '../components/MenuBar';
 import { searchCollaborators, searchCoCooperator, getArtistDetailsSearch, getArtistGrammyAlbumSearch, getArtistGrammySongSearch } from '../fetcher'
@@ -97,7 +95,7 @@ class ArtistDetailsPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            artistName: 'Beyonce',
+            artistName: null,
             grammyAlbumAwardDetails: null,
             grammySongAwardDetails: null,
             artistBasicDetails: null,
@@ -105,7 +103,7 @@ class ArtistDetailsPage extends React.Component {
             cooperatorSongPopularity: 0,
             cooperatedResults: null,
             potentialCollabHitsNum: 0,
-            potentialCollabResults: null 
+            potentialCollabResults: null
         }
 
         this.handleCooperatorFollowersSearchChange = this.handleCooperatorFollowersSearchChange.bind(this)
@@ -119,108 +117,111 @@ class ArtistDetailsPage extends React.Component {
     }
 
     handleCooperatorFollowersSearchChange(value) {
-        this.setState({cooperatorFollowers: value})
+        this.setState({ cooperatorFollowers: value })
     }
 
     handleCooperatorSongPopSearchChange(value) {
-        this.setState({cooperatorSongPopularity: value})
+        this.setState({ cooperatorSongPopularity: value })
     }
 
 
     handlePotentialCollabHitsNumSearchChange(value) {
-        this.setState({potentialCollabHitsNum: value})
+        this.setState({ potentialCollabHitsNum: value })
     }
 
     updateCooperatorSearchResults() {
         searchCollaborators(this.state.artistName, this.state.cooperatorSongPopularity, this.state.cooperatorFollowers).then(res => {
-            this.setState({cooperatedResults: res.results})
-        }) 
+            this.setState({ cooperatedResults: res.results })
+        })
     }
 
     updatePotentialCollabSearchResults() {
         searchCoCooperator(this.state.artistName, this.state.cooperatorFollowers, this.state.potentialCollabHitsNum).then(res => {
-            this.setState({potentialCollabResults: res.results})
+            this.setState({ potentialCollabResults: res.results })
         })
     }
 
     componentDidMount() {
+        const artist = window.location.href.split('/')[4].replace('%20', ' ')
 
-        getArtistDetailsSearch(this.state.artistName).then(res => {
-            this.setState({artistBasicDetails: res.results[0]})
-        }) 
+        this.setState( {artistName: artist} )
 
-        getArtistGrammyAlbumSearch(this.state.artistName).then(res => {
-            this.setState({grammyAlbumAwardDetails: res.results})
+        getArtistDetailsSearch(artist).then(res => {
+            this.setState({ artistBasicDetails: res.results[0] })
         })
 
-        getArtistGrammySongSearch(this.state.artistName).then(res => {
-            this.setState({grammySongAwardDetails: res.results})
+        getArtistGrammyAlbumSearch(artist).then(res => {
+            this.setState({ grammyAlbumAwardDetails: res.results })
+        })
+
+        getArtistGrammySongSearch(artist).then(res => {
+            this.setState({ grammySongAwardDetails: res.results })
         })
 
     }
-    
+
     render() {
         return (
             <div>
-                <MenuBar/>
+                <MenuBar />
                 {/* {this.state.artistBasicDetails ? } */}
                 {this.state.artistBasicDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
-                <Card>
-                    <CardBody>
-                        <Row gutter='30' align='middle' justify='center'>
-                            <Col flex={2} style={{ textAlign: 'left' }}>
-                                <h2>{this.state.artistBasicDetails.artistName}</h2>
-                            </Col>
-                            <Col flex={2} style={{ textAlign: 'right' }}>
-                                <h3>{this.state.artistBasicDetails.GroupSolo}</h3>
-                            </Col>
-                        </Row>
-                        <Row gutter='30' align='middle' justify='left'>
-                            <Col>
-                                First Album in: {this.state.artistBasicDetails.yearFirst_album}
-                            </Col>
-                            <Col>
-                                Number of Albums: {this.state.artistBasicDetails.numAlbums}
-                            </Col>
-                            <Col flex={2} style={{ textAlign: 'right'}}>
-                                Gender: {this.state.artistBasicDetails.gender}
-                            </Col>
-                            <Col flex={2} style={{ textAlign: 'right'}}>
-                                Followers: {this.state.artistBasicDetails.followers}
-                            </Col>
-                        </Row>
-                        <Row gutter='30' align='middle' justify='left'>
-                            <Col>
-                                Genres: {this.state.artistBasicDetails.genres}
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                Hits: {this.state.artistBasicDetails.hits}
-                            </Col>
-                        </Row>
-                    </CardBody>
-                </Card>
-                </div>:null}
+                    <Card>
+                        <CardBody>
+                            <Row gutter='30' align='middle' justify='center'>
+                                <Col flex={2} style={{ textAlign: 'left' }}>
+                                    <h2>{this.state.artistBasicDetails.artistName}</h2>
+                                </Col>
+                                <Col flex={2} style={{ textAlign: 'right' }}>
+                                    <h3>{this.state.artistBasicDetails.GroupSolo}</h3>
+                                </Col>
+                            </Row>
+                            <Row gutter='30' align='middle' justify='left'>
+                                <Col>
+                                    First Album in: {this.state.artistBasicDetails.yearFirst_album}
+                                </Col>
+                                <Col>
+                                    Number of Albums: {this.state.artistBasicDetails.numAlbums}
+                                </Col>
+                                <Col flex={2} style={{ textAlign: 'right' }}>
+                                    Gender: {this.state.artistBasicDetails.gender}
+                                </Col>
+                                <Col flex={2} style={{ textAlign: 'right' }}>
+                                    Followers: {this.state.artistBasicDetails.followers}
+                                </Col>
+                            </Row>
+                            <Row gutter='30' align='middle' justify='left'>
+                                <Col>
+                                    Genres: {this.state.artistBasicDetails.genres}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    Hits: {this.state.artistBasicDetails.hits}
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </div> : null}
 
-                <Divider/>
-                
+                <Divider />
+
                 {/* this.state.grammyAwardDetails ?  */}
                 {/* <Col flex={2} style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
                     <h2>Grammy Awards</h2>
                 </Col> */}
-                {this.state.grammyAlbumAwardDetails ? 
-                <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-                    <h3>Grammy Albums</h3>
-                    <Table dataSource={this.state.grammyAlbumAwardDetails} columns={grammyAlbums} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
-                </div> : null }
-                {this.state.grammySongAwardDetails ? 
-                <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
-                    <h3>Grammy Songs</h3>
-                    <Table dataSource={this.state.grammySongAwardDetails} columns={grammySongs} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
-                </div>:null}
+                {this.state.grammyAlbumAwardDetails ?
+                    <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+                        <h3>Grammy Albums</h3>
+                        <Table dataSource={this.state.grammyAlbumAwardDetails} columns={grammyAlbums} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }} />
+                    </div> : null}
+                {this.state.grammySongAwardDetails ?
+                    <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
+                        <h3>Grammy Songs</h3>
+                        <Table dataSource={this.state.grammySongAwardDetails} columns={grammySongs} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }} />
+                    </div> : null}
 
-                <Divider/>
+                <Divider />
                 <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
                     <h3>Collaborators</h3>
                 </div>
@@ -239,8 +240,8 @@ class ArtistDetailsPage extends React.Component {
                         </FormGroup></Col>
                     </Row>
                 </Form>
-                <Table dataSource={this.state.cooperatedResults} columns={collaboratorsColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
-                
+                <Table dataSource={this.state.cooperatedResults} columns={collaboratorsColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }} />
+
                 <Divider />
                 <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
                     <h3>Potential Collaborators</h3>
@@ -256,11 +257,11 @@ class ArtistDetailsPage extends React.Component {
                         </FormGroup></Col>
                     </Row>
                 </Form>
-                <Table dataSource={this.state.potentialCollabResults} columns={potentialCollabColumns} pagination={{ pageSizeOptions:[5, 10], defaultPageSize: 5, showQuickJumper:true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}/>
-            </div>    
+                <Table dataSource={this.state.potentialCollabResults} columns={potentialCollabColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }} />
+            </div>
 
         )
     }
 }
 
-export default ArtistDetailsPage
+export default ArtistDetailsPage;

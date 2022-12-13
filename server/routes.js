@@ -85,27 +85,41 @@ async function search_artists(req, res) {
 //Route 2
 async function search_songs(req, res) {
     const genre = req.query.genre ? req.query.genre : '%%'
-    const song = req.query.song ? req.query.artist : '%%'
+    const song = req.query.song ? req.query.song : '%%'
     const year = req.query.year ? req.query.year : 2019
-    connection.query(`SELECT DISTINCT name as song, artist, genre
+    const release = req.query.release ? req.query.release : "false"
+    if (release === "true") {
+        connection.query(`SELECT DISTINCT name as song, artist, genre
         FROM Billboard
-        WHERE name LIKE '%${song}%' AND genre Like '%${genre}%' AND Year(week) = ${year}
+        WHERE name LIKE '%${song}%' AND genre Like '%${genre}%' AND Year(week) = ${year} AND name NOT LIKE '%/%'
         ORDER BY song`, function (error, results, fields) {
-        if (error) {
-            console.log(error)
-            res.json({ error: error })
-        } else if (results) {
-            res.json({ results: results })
-        }
-    })
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
+            }
+        })
+    } else {
+        connection.query(`SELECT DISTINCT name as song, artist, genre
+        FROM Billboard
+        WHERE name LIKE '%${song}%' AND genre Like '%${genre}%' AND name NOT LIKE '%/%'
+        ORDER BY song`, function (error, results, fields) {
+            if (error) {
+                console.log(error)
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
+            }
+        })
+    }
 }
 
 //Query 2 -> route 3
-async function search_collaborators(req,res)
-{
-    const artist=req.params.artist;
-    const popThreshold= req.query.popThreshold?req.query.popThreshold:0
-    const folThreshold=req.query.folThreshold?req.query.folThreshold:0
+async function search_collaborators(req, res) {
+    const artist = req.params.artist;
+    const popThreshold = req.query.popThreshold ? req.query.popThreshold : 0
+    const folThreshold = req.query.folThreshold ? req.query.folThreshold : 0
 
     connection.query(
         `WITH TargetArtistWork AS ( SELECT name, date FROM Billboard WHERE artist = "${artist}"), 
@@ -122,15 +136,12 @@ async function search_collaborators(req,res)
          INNER JOIN
          (SELECT artistName, followers FROM Artist 
          WHERE followers >= ${folThreshold}) FamousArtists ON FamousArtists.artistName = FamousCollab.artists;`,
-        function(error,results,fields)
-        {
-            if(error)
-            {
+        function (error, results, fields) {
+            if (error) {
                 comsole.log(error)
-                res.json({error:error})
-            } else if(results)
-            {
-                res.json({results:results})
+                res.json({ error: error })
+            } else if (results) {
+                res.json({ results: results })
             }
         });
 }
@@ -147,7 +158,7 @@ async function search_co_cooperator(req, res) {
     const folThreshold = req.query.fol_threshold ? req.query.fol_threshold : 0
     const hitsThreshold = req.query.hits_threshold ? req.query.hits_threshold : 0
 
-    connection.query( `
+    connection.query(`
     WITH TargetArtistWork AS
     ( SELECT name, date FROM Billboard where artist =
     '${artist}' ),
@@ -231,30 +242,30 @@ async function searchArtistsGrammyWithTimeDiff(req, res) {
 // new query 11 -> ArtistDetails page
 // route 7
 // Select * from artist, join with billboard to get this artist's number of hits
-async function searchArtistDetails (req, res) {
+async function searchArtistDetails(req, res) {
     const artist = req.params.artist
     connection.query(`SELECT * FROM Artist LEFT JOIN (SELECT artist, COUNT(DISTINCT name) AS hits_num, GROUP_CONCAT(DISTINCT name SEPARATOR ', ') AS hits FROM Billboard GROUP BY artist) B
     ON Artist.artistName=B.artist
     WHERE artistName = '${artist}'`, function (error, results, fields) {
         if (error) {
             console.log(error)
-            res.json({error:error})
+            res.json({ error: error })
         } else if (results) {
-            res.json({results: results })
-        }   
+            res.json({ results: results })
+        }
     });
 }
 
 // new query 12 -> ArtistDetails page
 // route 7
 // select grammy-winning albums by artist name
-async function searchArtistGrammyAlbum (req, res) {
+async function searchArtistGrammyAlbum(req, res) {
     const artist = req.params.artist
-    connection.query(`SELECT * FROM GrammyAlbum WHERE artist = '${artist}'`, function(error, results, fields){
+    connection.query(`SELECT * FROM GrammyAlbum WHERE artist = '${artist}'`, function (error, results, fields) {
         if (error) {
             console.log(error)
         } else if (results) {
-            res.json({results:results})
+            res.json({ results: results })
         }
     })
 }
@@ -262,53 +273,53 @@ async function searchArtistGrammyAlbum (req, res) {
 // new query 13 -> ArtistDetails page
 // route 8
 // select grammy-winning songs by artist name
-async function searchArtistGrammySong (req, res) {
+async function searchArtistGrammySong(req, res) {
     const artist = req.params.artist
-    connection.query(`SELECT * FROM GrammySong WHERE artist = '${artist}'`, function(error, results, fields){
+    connection.query(`SELECT * FROM GrammySong WHERE artist = '${artist}'`, function (error, results, fields) {
         if (error) {
             console.log(error)
         } else if (results) {
-            res.json({results:results})
+            res.json({ results: results })
         }
     })
 }
 
 // new query 14-16 -> SongDetails page
 // route 9
-async function searchSongDetails (req, res) {
+async function searchSongDetails(req, res) {
     const songName = req.params.songName
     const artist = req.params.artist
-    connection.query(`SELECT * FROM SongAttributes WHERE songName = '${songName}' AND artist = '${artist}'`, function(error, results, fields){
+    connection.query(`SELECT * FROM SongAttributes WHERE songName = '${songName}' AND artist = '${artist}'`, function (error, results, fields) {
         if (error) {
             console.log(error)
         } else if (results) {
-            res.json({results:results})
+            res.json({ results: results })
         }
     })
 }
 
 // route 10
-async function searchSongGrammy (req, res) {
+async function searchSongGrammy(req, res) {
     const songName = req.params.songName
     const artist = req.params.artist
-    connection.query(`SELECT * FROM GrammySong WHERE songName = '${songName}' AND artist = '${artist}'`, function(error, results, fields){
+    connection.query(`SELECT * FROM GrammySong WHERE songName = '${songName}' AND artist = '${artist}'`, function (error, results, fields) {
         if (error) {
             console.log(error)
         } else if (results) {
-            res.json({results:results})
+            res.json({ results: results })
         }
     })
 }
 
 // route 11
-async function searchSongBillboard (req, res) {
+async function searchSongBillboard(req, res) {
     const songName = req.params.songName
     const artist = req.params.artist
-    connection.query(`SELECT genre, peakPosition, weeklyRank, week, lyric FROM Billboard WHERE name = '${songName}' AND artist = '${artist}'`, function(error, results, fields){
+    connection.query(`SELECT genre, peakPosition, weeklyRank, week, lyric FROM Billboard WHERE name LIKE '%${songName}%' AND artist = '${artist}'`, function (error, results, fields) {
         if (error) {
             console.log(error)
         } else if (results) {
-            res.json({results:results})
+            res.json({ results: results })
         }
     })
 }

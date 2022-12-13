@@ -8,6 +8,7 @@ import {
     Col,
     Divider,
     Slider,
+    Checkbox,
 } from 'antd'
 
 
@@ -49,6 +50,7 @@ class SongPage extends React.Component {
             song: "",
             genre: "",
             year: 2019,
+            release: false,
 
             songResults: [],
         }
@@ -56,6 +58,7 @@ class SongPage extends React.Component {
         this.handleGenreChange = this.handleGenreChange.bind(this)
         this.handleYearChange = this.handleYearChange.bind(this)
         this.updateSearchSongResults = this.updateSearchSongResults.bind(this)
+        this.handleReleaseChange = this.handleReleaseChange.bind(this)
     }
 
 
@@ -71,16 +74,21 @@ class SongPage extends React.Component {
         this.setState({ year: value })
     }
 
-    updateSearchSongResults() {
-
-        searchSong(this.state.song, this.state.genre, this.state.year).then(res=> {
-            this.setState({ songResults: res.results })
-        })
-        
+    handleReleaseChange(event){
+        this.setState({ release: event.target.checked })
     }
 
+    updateSearchSongResults() {
+
+        searchSong(this.state.song, this.state.genre, this.state.year, this.state.release).then(res => {
+            this.setState({ songResults: res.results })
+        })
+
+    }
+
+
     componentDidMount() {
-        searchSong(this.state.song, this.state.genre, this.state.year).then(res=> {
+        searchSong(this.state.song, this.state.genre, this.state.year, this.state.release).then(res => {
             this.setState({ songResults: res.results })
         })
     }
@@ -114,13 +122,19 @@ class SongPage extends React.Component {
                                 </Select>
                             </FormGroup>
                         </Col>
-                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
+                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
+                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchSongResults}>Search</Button>
+                        </FormGroup></Col>
+                    </Row>
+
+                    <Row>
+                        <Col flex={0.2} ><Checkbox style={{ margin: '30px 0px', }} onChange={this.handleReleaseChange}>
+                            release in
+                        </Checkbox></Col>
+                        <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0px 0px' }}>
                             <label>Year</label>
                             <Slider step={1} defaultValue={2019} min={1999} max={2019} onChange={this.handleYearChange} />
 
-                        </FormGroup></Col>
-                        <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchSongResults}>Search</Button>
                         </FormGroup></Col>
                     </Row>
                 </Form>

@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import {
 	BrowserRouter as Router,
 	Route,
-	Switch
+	Switch,
+	useParams
 } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
@@ -38,12 +39,12 @@ ReactDOM.render(
 								<SongPage />
 							)}/>
 		<Route exact 
-							path="/artist_details"
+							path="/artistsDetail/:artist"
 							render={() => (
 								<ArtistDetailsPage />
 							)}/>
 		<Route exact 
-							path="/song_details"
+							path="/songDetails/:artist/:song"
 							render={() => (
 								<SongDetailsPage />
 							)}/>
