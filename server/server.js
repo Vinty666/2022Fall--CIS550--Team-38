@@ -39,13 +39,13 @@ app.get('/artist_details/getGrammyAlbums/:artist', routes.searchArtistGrammyAlbu
 app.get('/artist_details/getGrammySongs/:artist', routes.searchArtistGrammySong)
 
 // new query 14 -> SongDetails page
-app.get('/song_details/getSongDetails/:songName/:artist', routes.searchSongDetails)
+app.get('/song_details/getSongDetails/:artist/:songName', routes.searchSongDetails)
 
 // new query 15 -> SongDetails page -> song grammy info
-app.get('/song_details/grammy/:songName/:artist', routes.searchSongGrammy)
+app.get('/song_details/grammy/:artist/:songName', routes.searchSongGrammy)
 
 // new query 16 -> SongDetails page -> song billboard info
-app.get('/song_details/billboard/:songName/:artist', routes.searchSongBillboard)
+app.get('/song_details/billboard/:artist/:songName', routes.searchSongBillboard)
 
 app.listen(config.server_port, () => {
     console.log(`Server running at http://${config.server_host}:${config.server_port}/`);

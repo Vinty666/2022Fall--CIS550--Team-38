@@ -11,8 +11,8 @@ const searchArtist=async(billboard,grammy,artist,genre,followers,numAlbums)=>{
 }
 
 //Route 2
-const searchSong=async(song, genre, year)=>{
-    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongs?song=${song}&genre=${genre}&year=${year}`,{
+const searchSong=async(song, genre, year, release)=>{
+    var res=await fetch(`http://${config.server_host}:${config.server_port}/getSongs?song=${song}&genre=${genre}&year=${year}&release=${release}`,{
         method:'GET'
     })
     const result = await res.json()
@@ -82,7 +82,7 @@ const getArtistGrammySongSearch=async(artist)=>{
 
 // In SongDetails page
 const getSongDetailsSearch=async(songName, artist)=>{
-    const url = `http://${config.server_host}:${config.server_port}/song_details/getSongDetails/${songName}/${artist}`
+    const url = `http://${config.server_host}:${config.server_port}/song_details/getSongDetails/${artist}/${songName}`
     var res=await fetch(url, {method: 'GET'})
     const results = await res.json();
     return results;
@@ -90,7 +90,7 @@ const getSongDetailsSearch=async(songName, artist)=>{
 
 // In SongDetails page 
 const getSongGrammySearch=async(songName, artist)=>{
-    const url = `http://${config.server_host}:${config.server_port}/song_details/grammy/${songName}/${artist}`
+    const url = `http://${config.server_host}:${config.server_port}/song_details/grammy/${artist}/${songName}`
     var res=await fetch(url, {method: 'GET'})
     const results = await res.json();
     return results;
@@ -98,7 +98,7 @@ const getSongGrammySearch=async(songName, artist)=>{
 
 // In SongDetails page 
 const getSongBillboardSongSearch=async(songName, artist)=>{
-    const url = `http://${config.server_host}:${config.server_port}/song_details/billboard/${songName}/${artist}`
+    const url = `http://${config.server_host}:${config.server_port}/song_details/billboard/${artist}/${songName}`
     var res=await fetch(url, {method: 'GET'})
     const results = await res.json();
     return results;
