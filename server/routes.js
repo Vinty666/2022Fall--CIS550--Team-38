@@ -115,27 +115,23 @@ async function search_songs(req, res) {
     }
 }
 
-//Query 2 -> route 3
+//Query 2(optimized) -> route 3
 async function search_collaborators(req, res) {
     const artist = req.params.artist;
     const popThreshold = req.query.popThreshold ? req.query.popThreshold : 0
     const folThreshold = req.query.folThreshold ? req.query.folThreshold : 0
 
     connection.query(
-        `WITH TargetArtistWork AS ( SELECT name, date FROM Billboard WHERE artist = "${artist}"), 
-         Collab AS ( SELECT B.artist AS artists, B.name AS songs FROM Billboard B INNER JOIN TargetArtistWork 
-         ON ((TargetArtistWork.name = B.name) AND (TargetArtistWork.date = B.date)) 
-         WHERE B.artist != "${artist}"), FamousCollab AS 
-         ( SELECT artists, songs FROM Collab 
-         INNER JOIN 
-         (SELECT S.artist as artist, S. songName as song 
-         FROM SongAttributes S 
-         WHERE S.popularity >= ${popThreshold}) FamousCollabSongs ON songs = FamousCollabSongs.song )
-         SELECT DISTINCT FamousCollab.artists, FamousCollab.songs, FamousArtists.followers 
-         FROM FamousCollab 
-         INNER JOIN
-         (SELECT artistName, followers FROM Artist 
-         WHERE followers >= ${folThreshold}) FamousArtists ON FamousArtists.artistName = FamousCollab.artists;`,
+       `WITH Collab AS (SELECT name, collabArtist FROM Collaborators WHERE artist = '${artist}'),
+        FamousCollab AS ( SELECT Collab.collabArtist AS collabArtist, Collab.name AS songs FROM Collab
+            INNER JOIN
+               (SELECT S.artist as artist, S. songName as song FROM SongAttributes S WHERE S.popularity >= ${popThreshold}) FamousCollabSongs
+            ON Collab.name = FamousCollabSongs.song ),
+        FamousArtists AS (SELECT artistName, followers FROM Artist WHERE followers >= ${folThreshold})
+   
+        SELECT DISTINCT FamousCollab.collabArtist AS artists, FamousCollab.songs, FamousArtists.followers
+        FROM FamousCollab
+        INNER JOIN FamousArtists ON FamousArtists.artistName = FamousCollab.collabArtist;`,
         function (error, results, fields) {
             if (error) {
                 comsole.log(error)
@@ -147,7 +143,7 @@ async function search_collaborators(req, res) {
 }
 
 
-//Query 3 -> route 4
+//Query 3(optimized) -> route 4
 // Description: 
 // To get potential collaborators: Select the co-artist of the
 // co-artist of an ${artist} where co-artists of co-artists have published at
@@ -159,32 +155,14 @@ async function search_co_cooperator(req, res) {
     const hitsThreshold = req.query.hits_threshold ? req.query.hits_threshold : 0
 
     connection.query(`
-    WITH TargetArtistWork AS
-    ( SELECT name, date FROM Billboard where artist =
-    '${artist}' ),
-    CO1_artist AS
-    ( SELECT DISTINCT B.artist AS artists FROM Billboard
-    B INNER JOIN TargetArtistWork ON ((TargetArtistWork.name =
-    B.name) AND (TargetArtistWork.date = B.date)) WHERE B.artist
-    != '${artist}' ),
-    CO1_songs AS
-    ( SELECT name, date FROM Billboard WHERE artist IN
-    (SELECT * FROM CO1_artist) ),
-    CO2_artist AS
-    ( SELECT DISTINCT B.artist AS artists FROM Billboard
-    B INNER JOIN CO1_songs ON ((CO1_songs.name = B.name) AND
-    (CO1_songs.date = B.date)) ),
-    CO2_artist_song AS
-    ( SELECT artist, name FROM Billboard WHERE artist IN
-    (SELECT * FROM CO2_artist) ),
-    FamousArtist AS
-    ( SELECT DISTINCT artist, name FROM CO2_artist_song
-    INNER JOIN (SELECT artistName FROM Artist WHERE followers >=
-    ${folThreshold}) Famous ON Famous.artistName = artist )
-    SELECT artist FROM (SELECT artist, COUNT(name) AS hitSongNum
-    FROM FamousArtist GROUP BY artist) famousCO2hitsNum WHERE
-    hitSongNum >= ${hitsThreshold} AND artist !=
-    '${artist}';`, function (error, results, fields) {
+    WITH CO1_artist AS ( SELECT collabArtist FROM Collaborators where artist = '${artist}' ),
+     CO2_artist AS ( SELECT collabArtist, name FROM Collaborators where artist IN (SELECT * FROM CO1_artist)),
+     FamousCollabArtist AS
+        ( SELECT DISTINCT collabArtist, name FROM CO2_artist
+            INNER JOIN (SELECT artistName FROM Artist WHERE followers >= ${folThreshold}) Famous
+            ON Famous.artistName = collabArtist )
+    SELECT collabArtist AS artist FROM (SELECT collabArtist, COUNT(name) AS hitSongNum FROM FamousCollabArtist GROUP BY collabArtist) famousCO2hitsNum WHERE
+    hitSongNum >= ${hitsThreshold} AND collabArtist != '${artist}';`, function (error, results, fields) {
 
         if (error) {
             console.log(error)
