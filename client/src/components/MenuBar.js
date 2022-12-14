@@ -11,20 +11,20 @@ import {
     render() {
         return(
             <Navbar type="dark" theme="dark" expand="md">
-        <NavbarBrand href="/">Music Wiki</NavbarBrand>
+        <NavbarBrand href="/"  style={{background:'dark', color: 'yellow'}}>Music Wiki</NavbarBrand>
           <Nav navbar>
           <NavItem>
-              <NavLink active href="/">
+              <NavLink active href="/" style={{background:'dark', color: 'yellow'}}>
                 Home
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active href="/artists">
+              <NavLink active href="/artists"  style={{background:'dark', color: 'yellow'}}>
                 Artists
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink active  href="/songs" >
+              <NavLink active  href="/songs"  style={{background:'dark', color: 'yellow'}}>
                 Songs
               </NavLink>
             </NavItem>

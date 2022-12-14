@@ -115,15 +115,15 @@ class HomePage extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{ background:'#FFFFFF'}}>
         <MenuBar />
-        <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}><h3>Trending</h3></div>
+        <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh', textalign: 'center' }}><h3>Trending</h3></div>
 
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
           <h4>Billboard Trend</h4>
           <Row>
             <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-              <label>Number of hit songs</label>
+              <label color='dark'>Number of hit songs</label>
               <Slider step={1} defaultValue={0} min={0} max={150} onChange={this.handleSongNumChange} />
 
             </FormGroup></Col>
@@ -133,7 +133,7 @@ class HomePage extends React.Component {
 
             </FormGroup></Col>
             <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-              <Button style={{ marginTop: '4vh' ,background:'black'}} onClick={this.updateArtistResults}>Search</Button>
+              <Button style={{ marginTop: '4vh' ,background:'black', color: 'yellow', border: '4px solid #e7e7e7', width: '250px'}} onClick={this.updateArtistResults}>Search</Button>
             </FormGroup></Col>
 
           </Row>

@@ -123,7 +123,7 @@ class SongPage extends React.Component {
                             </FormGroup>
                         </Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchSongResults}>Search</Button>
+                            <Button style={{ marginTop: '4vh' ,background:'black', color: 'yellow', border: '4px solid #e7e7e7', width: '250px'}} onClick={this.updateSearchSongResults}>Search</Button>
                         </FormGroup></Col>
                     </Row>
 
