@@ -236,7 +236,7 @@ class ArtistDetailsPage extends React.Component {
                             <Slider step={1} defaultValue={0} min={0} max={100} onChange={this.handleCooperatorSongPopSearchChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <Button style={{ marginTop: '3vh' }} onClick={this.updateCooperatorSearchResults}>Search Collaborators</Button>
+                            <Button style={{ marginTop: '3vh' ,background:'black', color: 'yellow', border: '4px solid #e7e7e7', width: '250px'}} onClick={this.updateCooperatorSearchResults}>Search Collaborators</Button>
                         </FormGroup></Col>
                     </Row>
                 </Form>
@@ -253,7 +253,7 @@ class ArtistDetailsPage extends React.Component {
                             <Slider step={1} defaultValue={0} min={0} max={100} onChange={this.handlePotentialCollabHitsNumSearchChange} />
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-                            <Button style={{ marginTop: '3vh' }} onClick={this.updatePotentialCollabSearchResults}>Search Potential Collaborators</Button>
+                            <Button style={{ marginTop: '3vh' ,background:'black', color: 'yellow', border: '4px solid #e7e7e7', width: '250px'}} onClick={this.updatePotentialCollabSearchResults}>Search Potential Collaborators</Button>
                         </FormGroup></Col>
                     </Row>
                 </Form>
