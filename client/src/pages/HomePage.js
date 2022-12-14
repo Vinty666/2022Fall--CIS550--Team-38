@@ -133,7 +133,7 @@ class HomePage extends React.Component {
 
             </FormGroup></Col>
             <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-              <Button style={{ marginTop: '4vh' }} onClick={this.updateArtistResults}>Search</Button>
+              <Button style={{ marginTop: '4vh' ,background:'black'}} onClick={this.updateArtistResults}>Search</Button>
             </FormGroup></Col>
 
           </Row>

@@ -153,7 +153,7 @@ class ArtistPage extends React.Component {
 
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh',col:'black' }} onClick={this.updateSearchArtistResults}>Search</Button>
+                            <Button style={{ marginTop: '4vh',background:'black' }} onClick={this.updateSearchArtistResults}>Search</Button>
                         </FormGroup></Col>
 
                     </Row>
