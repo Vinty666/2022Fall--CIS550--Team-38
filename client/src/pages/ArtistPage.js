@@ -111,7 +111,7 @@ class ArtistPage extends React.Component {
         return (
             <div>
                 <MenuBar />
-                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh', color: 'FA5047' }}>
+                <Form style={{ width: '80vw', margin: '0 auto', marginTop: '5vh'}}>
                     <Row>
                         <Col flex={2}>
                             <FormGroup style={{ width: '12vw', margin: '0 10px' }}>
@@ -153,7 +153,7 @@ class ArtistPage extends React.Component {
 
                         </FormGroup></Col>
                         <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-                            <Button style={{ marginTop: '4vh' }} onClick={this.updateSearchArtistResults}>Search</Button>
+                            <Button style={{ marginTop: '4vh',col:'black' }} onClick={this.updateSearchArtistResults}>Search</Button>
                         </FormGroup></Col>
 
                     </Row>
