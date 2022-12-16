@@ -3,7 +3,7 @@
   "name": "CIS 550 - HW2 FIFA Client",
   "icons": [
     {
-      "src": "football.svg",
+      "src": "reference.png",
       "type": "image/png",
       "sizes": "512x512"
     }

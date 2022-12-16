@@ -4,7 +4,6 @@ import {
 	BrowserRouter as Router,
 	Route,
 	Switch,
-	useParams
 } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
@@ -20,37 +19,37 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css"
 
 ReactDOM.render(
-  <div>
-    <Router>
-      <Switch>
-        <Route exact
-							path="/"
-							render={() => (
-								<HomePage />
-							)}/>
-        <Route exact
-							path="/artists"
-							render={() => (
-								<ArtistPage />
-							)}/>
-        <Route exact
-							path="/songs"
-							render={() => (
-								<SongPage />
-							)}/>
-		<Route exact 
-							path="/artistsDetail/:artist"
-							render={() => (
-								<ArtistDetailsPage />
-							)}/>
-		<Route exact 
-							path="/songDetails/:artist/:song"
-							render={() => (
-								<SongDetailsPage />
-							)}/>
-      </Switch>
-    </Router>
-  </div>,
-  document.getElementById('root')
+	<div>
+		<Router>
+			<Switch>
+				<Route exact
+					path="/"
+					render={() => (
+						<HomePage />
+					)} />
+				<Route exact
+					path="/artists"
+					render={() => (
+						<ArtistPage />
+					)} />
+				<Route exact
+					path="/songs"
+					render={() => (
+						<SongPage />
+					)} />
+				<Route exact
+					path="/artistsDetail/:artist"
+					render={() => (
+						<ArtistDetailsPage />
+					)} />
+				<Route exact
+					path="/songDetails/:artist/:song"
+					render={() => (
+						<SongDetailsPage />
+					)} />
+			</Switch>
+		</Router>
+	</div>,
+	document.getElementById('root')
 );
 

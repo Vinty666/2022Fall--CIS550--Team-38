@@ -60,10 +60,10 @@ class SongDetailsPage extends React.Component {
         this.state = {
             artistName: null,
             songName: null,
-            songBasicDetails: null, // song name, artist name, duration, which album, popularity (rate), energy, liveness, loudness, tempo, danceability from songAttributes, genre from Billboard
+            songBasicDetails: null,
             showLyrics: false,
-            songBillboard: null, // releaseDate, peakRankOnBillboard, writingCredits, lyrics, features with whom, genre
-            songGrammy: null // grammy award, grammyYear, genre, 
+            songBillboard: null,
+            songGrammy: null
         }
 
 
@@ -84,7 +84,7 @@ class SongDetailsPage extends React.Component {
         })
 
         getSongGrammySearch(song, artist).then(res => {
-            if (res.length > 0) {
+            if (res.results.length > 0) {
                 this.setState({ songGrammy: res.results })
             }
         })
@@ -148,7 +148,6 @@ class SongDetailsPage extends React.Component {
                                         data={[this.state.songBasicDetails]}
                                         tickFormat={t => wideFormat(t)}
                                         startingAngle={0}
-                                        // energy, liveness, loudness, tempo, danceability
                                         domains={[
                                             { name: 'Energy', domain: [0, 1], getValue: data => data.energy },
                                             { name: 'Liveness', domain: [0, 1], getValue: data => data.liveness },

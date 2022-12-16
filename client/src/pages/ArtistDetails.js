@@ -151,11 +151,15 @@ class ArtistDetailsPage extends React.Component {
         })
 
         getArtistGrammyAlbumSearch(artist).then(res => {
-            this.setState({ grammyAlbumAwardDetails: res.results })
+            if (res.results.length > 0){
+                this.setState({ grammyAlbumAwardDetails: res.results })
+            }
         })
 
         getArtistGrammySongSearch(artist).then(res => {
-            this.setState({ grammySongAwardDetails: res.results })
+            if (res.results.length > 0){
+                this.setState({ grammySongAwardDetails: res.results })
+            }
         })
 
     }
@@ -164,7 +168,6 @@ class ArtistDetailsPage extends React.Component {
         return (
             <div>
                 <MenuBar />
-                {/* {this.state.artistBasicDetails ? } */}
                 {this.state.artistBasicDetails ? <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
                     <Card>
                         <CardBody>
