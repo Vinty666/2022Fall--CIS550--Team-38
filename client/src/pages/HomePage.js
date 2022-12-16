@@ -17,7 +17,7 @@ const artistColumns = [
     title: 'Artist',
     dataIndex: 'artist',
     key: 'Artist',
-    sorter: (a, b) => a.Name.localeCompare(b.Name),
+    sorter: (a, b) => a.artist.localeCompare(b.artist),
     render: (text, row) => <a href={`/artistsDetail/${row.artist}`}>{text}</a>
   },
   {
@@ -46,7 +46,7 @@ const songColumns = [
     title: 'Artist',
     dataIndex: 'artist',
     key: 'Artist',
-    sorter: (a, b) => a.Name.localeCompare(b.Name),
+    sorter: (a, b) => a.artist.localeCompare(b.artist),
     render: (text, row) => <a href={`/artistsDetail/${row.artist}`}>{text}</a>
   },
   {
@@ -121,22 +121,6 @@ class HomePage extends React.Component {
 
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '5vh' }}>
           <h4>Billboard Trend</h4>
-          <Row>
-            <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-              <label color='dark'>Number of hit songs</label>
-              <Slider step={1} defaultValue={0} min={0} max={150} onChange={this.handleSongNumChange} />
-
-            </FormGroup></Col>
-            <Col flex={2}><FormGroup style={{ width: '20vw', margin: '0 auto' }}>
-              <label>Average song popularity</label>
-              <Slider step={1} defaultValue={0} min={0} max={100} onChange={this.handlePopularityChange} />
-
-            </FormGroup></Col>
-            <Col flex={2}><FormGroup style={{ width: '10vw' }}>
-              <Button style={{ marginTop: '4vh' ,background:'black', color: 'yellow', border: '4px solid #e7e7e7', width: '250px'}} onClick={this.updateArtistResults}>Search</Button>
-            </FormGroup></Col>
-
-          </Row>
           <Table dataSource={this.state.artistResults} columns={artistColumns} pagination={{ pageSizeOptions: [5, 10], defaultPageSize: 5, showQuickJumper: true }} />
         </div>
         <div style={{ width: '70vw', margin: '0 auto', marginTop: '2vh' }}>
